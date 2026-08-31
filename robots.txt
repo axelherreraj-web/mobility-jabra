@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Rastreadores de Motores de Búsqueda con IA (GEO)
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+Sitemap: https://jabra.mobilityglobal.net/sitemap.xml
