@@ -78,6 +78,7 @@
             src="Logo%20Mobility%20Global.png" 
             alt="Mobility Global Logo" 
             class="h-10 w-auto object-contain max-w-[220px]"
+            onerror="this.src='https://via.placeholder.com/180x40/2563eb/ffffff?text=MOBILITY+GLOBAL'"
           >
         </a>
         <span class="text-slate-500 text-xs hidden md:inline border-l border-slate-800 pl-3">
@@ -151,15 +152,16 @@
               <span class="bg-slate-700 text-slate-300 text-[10px] font-semibold px-2.5 py-0.5 rounded-full">Stock B2B</span>
             </div>
             
-           <div class="bg-slate-950 rounded-2xl p-2 border border-slate-800 flex flex-col items-center justify-center mb-5 overflow-hidden">
-  <img 
-    src="jabra-hero.jpg" 
-    alt="Jabra Evolve3 Series Lineup" 
-    class="w-full h-auto max-h-56 object-cover rounded-xl hover:scale-105 transition-transform duration-300"
-  >
-  <h3 class="text-base font-bold text-white mt-3">Jabra Evolve3 Series</h3>
-  <p class="text-xs text-slate-400 mt-0.5">Modelos 45 · 65 · 65 Flex · 75 · 85</p>
-</div>
+            <div class="bg-slate-950 rounded-2xl p-2 border border-slate-800 flex flex-col items-center justify-center mb-5 overflow-hidden">
+              <img 
+                src="jabra-hero.jpg" 
+                alt="Jabra Evolve3 Lineup" 
+                class="w-full h-auto max-h-56 object-cover rounded-xl hover:scale-105 transition-transform duration-300"
+                onerror="this.src='https://via.placeholder.com/652x300/0f172a/ffc000?text=Jabra+Evolve3+Range'"
+              >
+              <h3 class="text-base font-bold text-white mt-3">Jabra Evolve3 Series[cite: 1]</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Modelos 45 · 65 · 65 Flex · 75 · 85[cite: 1]</p>
+            </div>
 
             <ul class="text-xs text-slate-300 space-y-2.5">
               <li class="flex items-center gap-2">✔ <span><strong>Facturación fiscal:</strong> CFDI en México / DIAN con NIT en Colombia.</span></li>
@@ -206,12 +208,12 @@
     </div>
   </section>
 
-  <!-- Technical Specs Table -->
+  <!-- Technical Specs Table (Con los videos oficiales de Jabra integrados en el Modal) -->
   <section id="modelos" class="py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto mb-12">
         <h2 class="text-2xl sm:text-3xl font-bold text-white">Especificaciones y Modelos Disponibles</h2>
-        <p class="text-sm text-slate-400 mt-2">Comparativa técnica para seleccionar el modelo adecuado para tu equipo de trabajo[cite: 1].</p>
+        <p class="text-sm text-slate-400 mt-2">Haz clic sobre cualquier dispositivo para ver su video o demostración oficial.</p>
       </div>
 
       <div class="overflow-x-auto">
@@ -227,17 +229,22 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800 bg-slate-900/60 text-slate-300">
-            <tr>
+            
+            <!-- Evolve3 45 Video Oficial -->
+            <tr class="hover:bg-slate-800/60 transition">
               <td class="py-3.5 px-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400">
-                    🎧
+                <button type="button" onclick="openMediaModal('video', 'https://www.youtube.com/embed/t0yF3zsbxVc?autoplay=1', 'Jabra Evolve3 45 - Video Oficial')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
+                  <div class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 group-hover:border-amber-400 group-hover:scale-105 transition">
+                    ▶
                   </div>
                   <div>
-                    <span class="font-bold text-white block">Evolve3 45[cite: 1]</span>
+                    <span class="font-bold text-white block group-hover:text-amber-400 flex items-center gap-1.5 transition">
+                      Evolve3 45[cite: 1]
+                      <span class="text-[9px] bg-red-950/80 text-red-400 border border-red-500/30 px-1.5 py-0.2 rounded flex items-center gap-1">▶ Ver Video</span>
+                    </span>
                     <span class="text-[10px] text-slate-400">Oficina Esencial[cite: 1]</span>
                   </div>
-                </div>
+                </button>
               </td>
               <td class="py-3.5 px-4">Oficinas y Call Centers[cite: 1]</td>
               <td class="py-3.5 px-4">3-mic Jabra ClearVoice[cite: 1]</td>
@@ -245,17 +252,22 @@
               <td class="py-3.5 px-4">Uso continuo</td>
               <td class="py-3.5 px-4"><a href="#cotizar" class="text-amber-400 hover:underline font-semibold">Cotizar</a></td>
             </tr>
-            <tr class="bg-slate-900/90">
+
+            <!-- Evolve3 65 Video Oficial -->
+            <tr class="bg-slate-900/90 hover:bg-slate-800/80 transition">
               <td class="py-3.5 px-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400">
-                    🎧
+                <button type="button" onclick="openMediaModal('video', 'https://www.youtube.com/embed/14AfmSSpsCQ?autoplay=1', 'Jabra Evolve3 65 - Video Oficial')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
+                  <div class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 group-hover:border-amber-400 group-hover:scale-105 transition">
+                    ▶
                   </div>
                   <div>
-                    <span class="font-bold text-white block">Evolve3 65[cite: 1]</span>
+                    <span class="font-bold text-white block group-hover:text-amber-400 flex items-center gap-1.5 transition">
+                      Evolve3 65[cite: 1]
+                      <span class="text-[9px] bg-red-950/80 text-red-400 border border-red-500/30 px-1.5 py-0.2 rounded flex items-center gap-1">▶ Ver Video</span>
+                    </span>
                     <span class="text-[10px] text-slate-400">Open Office[cite: 1]</span>
                   </div>
-                </div>
+                </button>
               </td>
               <td class="py-3.5 px-4">Oficinas ruidosas[cite: 1]</td>
               <td class="py-3.5 px-4">4-mic ANC adaptativa[cite: 1]</td>
@@ -263,17 +275,22 @@
               <td class="py-3.5 px-4">Hasta 31 hrs conversación[cite: 1]</td>
               <td class="py-3.5 px-4"><a href="#cotizar" class="text-amber-400 hover:underline font-semibold">Cotizar</a></td>
             </tr>
-            <tr>
+
+            <!-- Evolve3 65 Flex Video Oficial -->
+            <tr class="hover:bg-slate-800/60 transition">
               <td class="py-3.5 px-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg bg-slate-800 border border-amber-400/40 flex items-center justify-center text-amber-400">
-                    ⭐
+                <button type="button" onclick="openMediaModal('video', 'https://www.youtube.com/embed/eB3xl0j6Sg0?autoplay=1', 'Jabra Evolve3 65 Flex - Video Oficial')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
+                  <div class="w-9 h-9 rounded-lg bg-slate-800 border border-amber-400/40 flex items-center justify-center text-amber-400 group-hover:scale-105 transition">
+                    ▶
                   </div>
                   <div>
-                    <span class="font-bold text-amber-400 block">Evolve3 65 Flex[cite: 1]</span>
+                    <span class="font-bold text-amber-400 block group-hover:underline flex items-center gap-1.5">
+                      Evolve3 65 Flex[cite: 1]
+                      <span class="text-[9px] bg-red-950/80 text-red-400 border border-red-500/30 px-1.5 py-0.2 rounded flex items-center gap-1">▶ Ver Video</span>
+                    </span>
                     <span class="text-[10px] text-slate-400">Híbrido Plegable[cite: 1]</span>
                   </div>
-                </div>
+                </button>
               </td>
               <td class="py-3.5 px-4">Movilidad y Viajes[cite: 1]</td>
               <td class="py-3.5 px-4">ANC adaptativa contra viento[cite: 1]</td>
@@ -281,17 +298,22 @@
               <td class="py-3.5 px-4">Audio HD LC3[cite: 1]</td>
               <td class="py-3.5 px-4"><a href="#cotizar" class="text-amber-400 hover:underline font-semibold">Cotizar</a></td>
             </tr>
-            <tr class="bg-slate-900/90">
+
+            <!-- Evolve3 75 / 85 Video Oficial -->
+            <tr class="bg-slate-900/90 hover:bg-slate-800/80 transition">
               <td class="py-3.5 px-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400">
-                    👑
+                <button type="button" onclick="openMediaModal('video', 'https://www.youtube.com/embed/DGr8CHnERTA?autoplay=1', 'Jabra Evolve 75 - Video Oficial')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
+                  <div class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 group-hover:border-amber-400 group-hover:scale-105 transition">
+                    ▶
                   </div>
                   <div>
-                    <span class="font-bold text-white block">Evolve3 75 / 85[cite: 1]</span>
+                    <span class="font-bold text-white block group-hover:text-amber-400 flex items-center gap-1.5 transition">
+                      Evolve3 75 / 85[cite: 1]
+                      <span class="text-[9px] bg-red-950/80 text-red-400 border border-red-500/30 px-1.5 py-0.2 rounded flex items-center gap-1">▶ Ver Video</span>
+                    </span>
                     <span class="text-[10px] text-slate-400">Alta Dirección[cite: 1]</span>
                   </div>
-                </div>
+                </button>
               </td>
               <td class="py-3.5 px-4">Concentración total[cite: 1]</td>
               <td class="py-3.5 px-4">ANC Digital + Spatial Sound[cite: 1]</td>
@@ -299,11 +321,42 @@
               <td class="py-3.5 px-4">Carga rápida (5m = 5h)[cite: 1]</td>
               <td class="py-3.5 px-4"><a href="#cotizar" class="text-amber-400 hover:underline font-semibold">Cotizar</a></td>
             </tr>
+
           </tbody>
         </table>
       </div>
     </div>
   </section>
+
+  <!-- Modal Interactivo para Reproducir Video o Imagen en la misma página -->
+  <div id="mediaModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
+      
+      <!-- Header del Modal -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/70">
+        <h3 id="modalTitle" class="text-base font-bold text-white">Detalle de Dispositivo</h3>
+        <button type="button" onclick="closeMediaModal()" class="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold focus:outline-none transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- Contenedor de Video YouTube (16:9) -->
+      <div class="p-4 bg-slate-950 flex items-center justify-center">
+        <div id="videoContainer" class="w-full aspect-video rounded-xl overflow-hidden bg-black">
+          <iframe id="youtubeIframe" class="w-full h-full" src="" title="Video Jabra" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <!-- Footer del Modal -->
+      <div class="px-6 py-3.5 border-t border-slate-800 bg-slate-950/70 flex justify-between items-center">
+        <span class="text-xs text-slate-400">Distribución oficial Mobility Global</span>
+        <a href="#cotizar" onclick="closeMediaModal()" class="jabra-yellow text-slate-950 font-bold px-4 py-2 rounded-lg text-xs hover:bg-amber-400 transition">
+          Cotizar este modelo
+        </a>
+      </div>
+
+    </div>
+  </div>
 
   <!-- FAQ Section (Schema.org / GEO) -->
   <section class="py-16 bg-slate-950 border-t border-slate-800">
@@ -352,13 +405,11 @@
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative">
         
-        <!-- Header del Formulario -->
         <div class="text-center mb-8">
           <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Solicitar Propuesta Corporativa</h2>
           <p class="text-xs sm:text-sm text-slate-400 mt-2">Configura tu requerimiento y recibe disponibilidad, demos y precios por volumen.</p>
         </div>
 
-        <!-- Indicador Visual de Pasos -->
         <div class="flex items-center justify-center gap-4 mb-8">
           <div id="step-indicator-1" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-active transition-all">
             <span class="w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold text-[11px]">1</span>
@@ -373,7 +424,7 @@
 
         <form id="lead-form" onsubmit="event.preventDefault(); submitLead();">
           
-          <!-- PASO 1: Datos de Contacto Esenciales -->
+          <!-- PASO 1: Datos de Contacto -->
           <div id="step-1" class="space-y-4">
             <div>
               <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Nombre Completo</label>
@@ -406,13 +457,13 @@
               </div>
             </div>
 
-            <button type="button" onclick="goToStep2()" class="w-full jabra-yellow jabra-yellow-hover text-slate-950 font-extrabold py-4 px-6 rounded-xl text-base tracking-wide transition-all shadow-lg mt-4 flex items-center justify-center gap-2 cursor-pointer">
+            <button type="button" onclick="goToStep2()" class="w-full jabra-yellow text-slate-950 font-extrabold py-4 px-6 rounded-xl text-base tracking-wide transition-all shadow-lg mt-4 flex items-center justify-center gap-2 cursor-pointer">
               <span>Continuar al Perfilamiento Técnico</span>
               <span>→</span>
             </button>
           </div>
 
-          <!-- PASO 2: Perfilamiento Técnico para Calificación de Lead -->
+          <!-- PASO 2: Perfilamiento -->
           <div id="step-2" class="space-y-4 hidden">
             
             <div class="grid sm:grid-cols-2 gap-4">
@@ -469,7 +520,7 @@
               <button type="button" onclick="goToStep1()" class="w-1/3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-4 px-4 rounded-xl text-sm border border-slate-700 transition cursor-pointer">
                 ← Volver
               </button>
-              <button type="submit" class="w-2/3 jabra-yellow jabra-yellow-hover text-slate-950 font-extrabold py-4 px-6 rounded-xl text-base tracking-wide transition-all shadow-lg cursor-pointer">
+              <button type="submit" class="w-2/3 jabra-yellow text-slate-950 font-extrabold py-4 px-6 rounded-xl text-base tracking-wide transition-all shadow-lg cursor-pointer">
                 Finalizar y Recibir Propuesta
               </button>
             </div>
@@ -477,7 +528,7 @@
 
         </form>
 
-        <!-- Mensaje de Éxito al Enviar -->
+        <!-- Mensaje de Éxito -->
         <div id="form-success" class="hidden text-center py-8">
           <div class="w-16 h-16 bg-amber-400/10 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
             ✓
@@ -512,8 +563,39 @@
     </div>
   </footer>
 
-  <!-- Lógica JavaScript para el Formulario Multietapa -->
+  <!-- Scripts -->
   <script>
+    // Control del Modal de Video / Imagen
+    function openMediaModal(type, sourceUrl, title) {
+      const modal = document.getElementById('mediaModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const videoContainer = document.getElementById('videoContainer');
+      const youtubeIframe = document.getElementById('youtubeIframe');
+
+      modalTitle.textContent = title;
+      youtubeIframe.src = sourceUrl;
+      videoContainer.classList.remove('hidden');
+      modal.classList.remove('hidden');
+    }
+
+    function closeMediaModal() {
+      const modal = document.getElementById('mediaModal');
+      const youtubeIframe = document.getElementById('youtubeIframe');
+
+      youtubeIframe.src = ''; // Detiene la reproducción del video
+      modal.classList.add('hidden');
+    }
+
+    // Cerrar modal con la tecla Escape o al hacer clic fuera del recuadro
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeMediaModal();
+    });
+
+    document.getElementById('mediaModal').addEventListener('click', function(e) {
+      if (e.target === this) closeMediaModal();
+    });
+
+    // Control del Formulario Multietapa
     function goToStep2() {
       const name = document.getElementById('lead_name').value.trim();
       const email = document.getElementById('lead_email').value.trim();
@@ -528,7 +610,6 @@
       document.getElementById('step-1').classList.add('hidden');
       document.getElementById('step-2').classList.remove('hidden');
 
-      // Actualizar visual de pasos
       const ind1 = document.getElementById('step-indicator-1');
       const ind2 = document.getElementById('step-indicator-2');
       ind1.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-inactive transition-all';
@@ -547,7 +628,6 @@
     }
 
     function submitLead() {
-      // Ocultar formulario y mostrar confirmación
       document.getElementById('lead-form').classList.add('hidden');
       document.getElementById('step-indicator-1').parentElement.classList.add('hidden');
       document.getElementById('form-success').classList.remove('hidden');
