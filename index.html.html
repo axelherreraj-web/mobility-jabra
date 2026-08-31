@@ -19,6 +19,7 @@
     .step-inactive { border-color: #334155; color: #64748B; }
   </style>
 
+  <!-- Schema.org JSON-LD para Motores de Búsqueda con IA -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -67,6 +68,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 antialiased selection:bg-amber-400 selection:text-slate-900">
 
+  <!-- Header -->
   <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -100,6 +102,7 @@
     </div>
   </header>
 
+  <!-- Hero Section -->
   <section class="relative pt-12 pb-20 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="grid lg:grid-cols-12 gap-10 items-center">
@@ -151,6 +154,7 @@
           </div>
         </div>
 
+        <!-- Hero Card -->
         <div class="lg:col-span-5">
           <div class="bg-gradient-to-b from-slate-800/90 to-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl">
             <div class="flex items-center justify-between mb-4">
@@ -181,6 +185,7 @@
     </div>
   </section>
 
+  <!-- 4 A's Section -->
   <section class="py-16 bg-slate-950 border-y border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto mb-12">
@@ -213,6 +218,7 @@
     </div>
   </section>
 
+  <!-- Technical Specs Table -->
   <section id="modelos" class="py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto mb-12">
@@ -234,6 +240,7 @@
           </thead>
           <tbody class="divide-y divide-slate-800 bg-slate-900/60 text-slate-300">
             
+            <!-- Evolve3 45 Video Oficial -->
             <tr class="hover:bg-slate-800/60 transition">
               <td class="py-3.5 px-4">
                 <button type="button" onclick="openMediaModal('video', 'https://www.youtube.com/embed/t0yF3zsbxVc?autoplay=1', 'Jabra Evolve3 45 - Video Oficial')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
@@ -256,6 +263,7 @@
               <td class="py-3.5 px-4"><a href="#cotizar" class="text-amber-400 hover:underline font-semibold">Cotizar</a></td>
             </tr>
 
+            <!-- Evolve3 65 Video Oficial -->
             <tr class="bg-slate-900/90 hover:bg-slate-800/80 transition">
               <td class="py-3.5 px-4">
                 <button type="button" onclick="openMediaModal('video', 'https://www.youtube.com/embed/14AfmSSpsCQ?autoplay=1', 'Jabra Evolve3 65 - Video Oficial')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
@@ -278,6 +286,7 @@
               <td class="py-3.5 px-4"><a href="#cotizar" class="text-amber-400 hover:underline font-semibold">Cotizar</a></td>
             </tr>
 
+            <!-- Evolve3 65 Flex Video Oficial -->
             <tr class="hover:bg-slate-800/60 transition">
               <td class="py-3.5 px-4">
                 <button type="button" onclick="openMediaModal('video', 'https://www.youtube.com/embed/eB3xl0j6Sg0?autoplay=1', 'Jabra Evolve3 65 Flex - Video Oficial')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
@@ -300,6 +309,7 @@
               <td class="py-3.5 px-4"><a href="#cotizar" class="text-amber-400 hover:underline font-semibold">Cotizar</a></td>
             </tr>
 
+            <!-- Evolve3 75 / 85 Video Oficial -->
             <tr class="bg-slate-900/90 hover:bg-slate-800/80 transition">
               <td class="py-3.5 px-4">
                 <button type="button" onclick="openMediaModal('video', 'https://www.youtube.com/embed/DGr8CHnERTA?autoplay=1', 'Jabra Evolve 75 - Video Oficial')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
@@ -328,6 +338,7 @@
     </div>
   </section>
 
+  <!-- Modal Interactivo para Reproducir Video -->
   <div id="mediaModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl relative">
       <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/70">
@@ -352,6 +363,7 @@
     </div>
   </div>
 
+  <!-- FAQ Section -->
   <section class="py-16 bg-slate-950 border-t border-slate-800">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-10">
@@ -393,6 +405,7 @@
     </div>
   </section>
 
+  <!-- Formulario Conectado a ZOHO CRM -->
   <section id="cotizar" class="py-20">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative">
@@ -414,8 +427,10 @@
           </div>
         </div>
 
+        <!-- Zoho Web-To-Lead Form -->
         <form id="webform5656461000042516023" name="WebToLeads5656461000042516023" action="https://crm.zoho.com/crm/WebToLeadForm" method="POST" onsubmit="javascript:document.charset='UTF-8'; return submitLeadToZoho();" accept-charset="UTF-8">
           
+          <!-- Zoho CRM Hidden Security & Config Fields -->
           <input type="hidden" name="xnQsjsdp" value="8845a052d9159becbb65207afc157d155d8adc90db9b0ddafd8a5b219499f553">
           <input type="hidden" name="zc_gad" id="zc_gad" value="">
           <input type="hidden" name="xmIwtLD" value="30c4da60f5ec7b4138b4d56add1859c3682c11d1fc6ae2c3f3df013e5016339fa62cd6c37c0790064dd9b4efa251035a">
@@ -425,12 +440,14 @@
           <input type="hidden" id="LDTuvid" name="LDTuvid">
           <input type="hidden" name="aG9uZXlwb3Q" value="">
           
+          <!-- Campos Ocultos para mapeo Zoho CRM -->
           <input type="hidden" id="zoho_first_name" name="First Name" value="">
           <input type="hidden" id="zoho_last_name" name="Last Name" value="">
           <input type="hidden" id="zoho_country" name="Country" value="MX">
-          <input type="hidden" id="zoho_lead_source" name="Lead Source" value="Landing page México Jabra Audio">
+          <input type="hidden" id="zoho_lead_source" name="Lead Source" value="México Jabra Audio">
           <input type="hidden" id="zoho_description" name="Description" value="">
 
+          <!-- PASO 1 -->
           <div id="step-1" class="space-y-4">
             <div>
               <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Nombre Completo <span class="text-red-400">*</span></label>
@@ -469,6 +486,7 @@
             </button>
           </div>
 
+          <!-- PASO 2 -->
           <div id="step-2" class="space-y-4 hidden">
             
             <div class="grid sm:grid-cols-2 gap-4">
@@ -533,6 +551,7 @@
 
         </form>
 
+        <!-- Mensaje de Éxito -->
         <div id="form-success" class="hidden text-center py-8">
           <div class="w-16 h-16 bg-amber-400/10 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
             ✓
@@ -550,7 +569,8 @@
     </div>
   </section>
 
-  <aside aria-label="Contacto por WhatsApp" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+  <!-- Botón Flotante Dual de WhatsApp (Posicionado a la Izquierda para no encimarse con el Chat de Zoho) -->
+  <aside aria-label="Contacto por WhatsApp" class="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-2">
     <div id="wa-floating-menu" class="hidden bg-slate-950 border border-slate-700 rounded-2xl p-3 shadow-2xl space-y-2 mb-1 animate-in fade-in zoom-in duration-150">
       <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">Selecciona tu país:</p>
       <a href="#" class="wa-btn-mx flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white text-xs font-semibold transition" target="_blank">
@@ -576,6 +596,7 @@
     </button>
   </aside>
 
+  <!-- Footer -->
   <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 space-y-2">
       <p>© 2026 Mobility Global. Distribuidor Autorizado en México y Colombia.</p>
@@ -583,6 +604,7 @@
     </div>
   </footer>
 
+  <!-- Zoho SalesIQ Tracking Script -->
   <script type="text/javascript" id="VisitorTracking">
     var $zoho = $zoho || {};
     $zoho.salesiq = $zoho.salesiq || {
@@ -600,8 +622,10 @@
     t.parentNode.insertBefore(s, t);
   </script>
 
+  <!-- Zoho WebForm Analytics Code -->
   <script id="wf_anal" src="https://crm.zohopublic.com/crm/WebFormAnalyticsServeServlet?rid=735bd68f0599d94cc6fdaef02a28b135ca71e17d66de0fea1efc940db2e806d35f8844c67bc8c1ef6cb409ff9fc85fbegid1bd7c6bd0be36dde4c2fd7a2cc662ba1a0216f521fccf3e4a32c989245561718gidb5c209b198fa652f80d4ecee23d9de3745729c2ff7a405827670121359dc7719gidbaa090249bbfff60e0fb1b4e85fd2f5ed336eabec649bc552f925ca0c92de934&tw=c5fa6355eda55d2ca8887a50029d81c4c28aaa92831aa5011f70707df1e974f2&version=v2"></script>
 
+  <!-- Scripts Operativos de la Landing -->
   <script>
     const PHONE_MX = "525500000000"; // Reemplaza con tu WhatsApp corporativo de México
     const PHONE_CO = "573000000000"; // Reemplaza con tu WhatsApp corporativo de Colombia
@@ -703,7 +727,7 @@
       const countryVal = document.getElementById('lead_country_select').value;
       document.getElementById('zoho_country').value = countryVal === 'MX' ? 'México' : (countryVal === 'CO' ? 'Colombia' : 'Otro');
 
-      const leadSourceVal = countryVal === 'CO' ? 'Landing page Colombia Jabra Audio' : 'Landing page México Jabra Audio';
+      const leadSourceVal = countryVal === 'CO' ? 'Colombia Jabra Audio' : 'México Jabra Audio';
       document.getElementById('zoho_lead_source').value = leadSourceVal;
 
       // Descripción con todos los datos del perfilamiento técnico
