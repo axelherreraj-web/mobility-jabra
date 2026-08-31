@@ -428,7 +428,7 @@
           <input type="hidden" id="zoho_first_name" name="First Name" value="">
           <input type="hidden" id="zoho_last_name" name="Last Name" value="">
           <input type="hidden" id="zoho_country" name="Country" value="MX">
-          <input type="hidden" id="zoho_lead_source" name="Lead Source" value="Landing page México Jabra">
+          <input type="hidden" id="zoho_lead_source" name="Lead Source" value="Landing page México Jabra Audio">
           <input type="hidden" id="zoho_description" name="Description" value="">
 
           <div id="step-1" class="space-y-4">
@@ -703,7 +703,7 @@
       const countryVal = document.getElementById('lead_country_select').value;
       document.getElementById('zoho_country').value = countryVal === 'MX' ? 'México' : (countryVal === 'CO' ? 'Colombia' : 'Otro');
 
-      const leadSourceVal = countryVal === 'CO' ? 'Landing page Colombia Jabra' : 'Landing page México Jabra';
+      const leadSourceVal = countryVal === 'CO' ? 'Landing page Colombia Jabra Audio' : 'Landing page México Jabra Audio';
       document.getElementById('zoho_lead_source').value = leadSourceVal;
 
       // Descripción con todos los datos del perfilamiento técnico
