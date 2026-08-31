@@ -6,6 +6,24 @@
   <title>Mobility Global | Jabra Evolve3 en México y Colombia</title>
   <meta name="description" content="Distribuidor corporativo de la serie Jabra Evolve3 en México y Colombia. Audio profesional con IA, cancelación activa de ruido y facturación fiscal local (CFDI / DIAN).">
   
+  <!-- Canonical Tag -->
+  <link rel="canonical" href="https://jabra.mobilityglobal.net/">
+
+  <!-- Open Graph / Redes Sociales & Buscadores con IA -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jabra.mobilityglobal.net/">
+  <meta property="og:title" content="Jabra Evolve3 México y Colombia | Mobility Global">
+  <meta property="og:description" content="Diademas corporativas Jabra Evolve3 con IA y cancelación activa de ruido. Facturación fiscal CFDI y DIAN con envíos a nivel nacional.">
+  <meta property="og:image" content="https://jabra.mobilityglobal.net/jabra-hero.jpg">
+  <meta property="og:locale" content="es_MX">
+  <meta property="og:locale:alternate" content="es_CO">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jabra Evolve3 México y Colombia | Distribuidor Corporativo">
+  <meta name="twitter:description" content="Audio profesional con IA para trabajo híbrido empresarial. Facturación inmediata CFDI y DIAN.">
+  <meta name="twitter:image" content="https://jabra.mobilityglobal.net/jabra-hero.jpg">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
@@ -19,17 +37,39 @@
     .step-inactive { border-color: #334155; color: #64748B; }
   </style>
 
-  <!-- Schema.org JSON-LD para Motores de Búsqueda con IA -->
+  <!-- Schema.org JSON-LD Enriquecido para SEO & Motores de Respuesta IA (Gemini, ChatGPT, Copilot, Perplexity) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Organization",
+        "@id": "https://mobilityglobal.net/#organization",
         "name": "Mobility Global",
-        "description": "Distribuidor de soluciones de audio y videoconferencia Jabra en México y Colombia",
-        "areaServed": ["MX", "CO"],
-        "telephone": "+525500000000"
+        "url": "https://mobilityglobal.net",
+        "logo": "https://jabra.mobilityglobal.net/Logo%20Mobility%20Global.png",
+        "description": "Distribuidor oficial corporativo de hardware de telecomunicaciones y audio profesional Jabra en México y Colombia.",
+        "areaServed": [
+          { "@type": "Country", "name": "Mexico" },
+          { "@type": "Country", "name": "Colombia" }
+        ],
+        "knowsAbout": [
+          "Jabra Evolve3",
+          "Microsoft Teams Certified Headsets",
+          "AI Noise Cancellation Audio",
+          "Enterprise Telephony",
+          "Wispr Flow Audio Accuracy"
+        ],
+        "makesOffer": {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product",
+            "name": "Jabra Evolve3 Series",
+            "brand": { "@type": "Brand", "name": "Jabra" }
+          },
+          "areaServed": ["MX", "CO"],
+          "acceptedPaymentMethod": "Corporate Invoicing (CFDI / DIAN)"
+        }
       },
       {
         "@type": "Product",
@@ -38,8 +78,8 @@
           "@type": "Brand",
           "name": "Jabra"
         },
-        "description": "Diademas profesionales con Jabra ClearVoice IA, cancelación activa de ruido adaptativa y compatibilidad UC.",
-        "category": "Headsets / Audio Profesional"
+        "description": "Diademas profesionales con tecnología Jabra ClearVoice IA, cancelación activa de ruido adaptativa y compatibilidad certificada para Microsoft Teams y Zoom.",
+        "category": "Headsets / Audio Profesional Empresarial"
       },
       {
         "@type": "FAQPage",
@@ -49,7 +89,7 @@
             "name": "¿Mobility Global emite factura fiscal en México y Colombia?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Sí, emitimos factura fiscal electrónica CFDI en México y factura avalada por la DIAN con NIT en Colombia."
+              "text": "Sí, emitimos factura fiscal electrónica CFDI con IVA desglosado en México y factura avalada por la DIAN con NIT en Colombia."
             }
           },
           {
@@ -57,7 +97,15 @@
             "name": "¿Cuál es la diferencia entre Jabra Evolve3 45 y Evolve3 65 Flex?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Evolve3 45 es una diadema ultraligera (~100g) para oficina fija, mientras que Evolve3 65 Flex es plegable y sin brazo visible de micrófono para trabajo híbrido."
+              "text": "Evolve3 45 es una diadema ultraligera (~100g) orientada a oficinas y puestos fijos, mientras que Evolve3 65 Flex cuenta con diseño plegable ultraportátil y sin brazo visible de micrófono para trabajo híbrido y viajes."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Por qué la serie Jabra Evolve3 está optimizada para asistentes de Inteligencia Artificial?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Cuenta con algoritmos de red neuronal entrenados para aislar la voz con precisión superior al 99%, permitiendo transcripciones exactas para herramientas GenAI como Microsoft Copilot, Zoom AI y Wispr Flow."
             }
           }
         ]
@@ -569,7 +617,7 @@
     </div>
   </section>
 
-  <!-- Botón Flotante Dual de WhatsApp (Posicionado a la Izquierda para no encimarse con el Chat de Zoho) -->
+  <!-- Botón Flotante Dual de WhatsApp (Posicionado a la Izquierda) -->
   <aside aria-label="Contacto por WhatsApp" class="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-2">
     <div id="wa-floating-menu" class="hidden bg-slate-950 border border-slate-700 rounded-2xl p-3 shadow-2xl space-y-2 mb-1 animate-in fade-in zoom-in duration-150">
       <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">Selecciona tu país:</p>
