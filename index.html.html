@@ -40,7 +40,7 @@
     .step-inactive { border-color: #334155; color: #64748B; }
   </style>
 
-  <!-- Schema.org JSON-LD Enriquecido para SEO & Motores de Respuesta IA (Gemini, ChatGPT, Copilot, Perplexity) -->
+  <!-- Schema.org JSON-LD Validado para Google Search Console & Motores IA -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -60,29 +60,30 @@
           "Jabra Evolve3",
           "Microsoft Teams Certified Headsets",
           "AI Noise Cancellation Audio",
-          "Enterprise Telephony",
-          "Wispr Flow Audio Accuracy"
-        ],
-        "makesOffer": {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Product",
-            "name": "Jabra Evolve3 Series",
-            "brand": { "@type": "Brand", "name": "Jabra" }
-          },
-          "areaServed": ["MX", "CO"],
-          "acceptedPaymentMethod": "Corporate Invoicing (CFDI / DIAN)"
-        }
+          "Enterprise Telephony"
+        ]
       },
       {
         "@type": "Product",
         "name": "Jabra Evolve3 Series",
+        "image": "https://jabra.mobilityglobal.net/jabra-hero.jpg",
+        "description": "Diademas profesionales con tecnología Jabra ClearVoice IA, cancelación activa de ruido adaptativa y compatibilidad certificada para Microsoft Teams y Zoom.",
         "brand": {
           "@type": "Brand",
           "name": "Jabra"
         },
-        "description": "Diademas profesionales con tecnología Jabra ClearVoice IA, cancelación activa de ruido adaptativa y compatibilidad certificada para Microsoft Teams y Zoom.",
-        "category": "Headsets / Audio Profesional Empresarial"
+        "offers": {
+          "@type": "AggregateOffer",
+          "priceCurrency": "USD",
+          "lowPrice": "99",
+          "highPrice": "399",
+          "offerCount": "5",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Mobility Global"
+          }
+        }
       },
       {
         "@type": "FAQPage",
