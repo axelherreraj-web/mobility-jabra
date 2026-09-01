@@ -777,6 +777,21 @@
 
     // Procesamiento y envío de datos a Zoho CRM
     function submitLeadToZoho() {
+      // 1. Evitar envíos duplicados si ya se está procesando
+  if (isSubmittingLead) {
+    return false;
+  }
+  isSubmittingLead = true;
+
+  // 2. Deshabilitar visualmente el botón de envío
+  const submitBtn = document.getElementById('formsubmit') || document.querySelector('button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Enviando cotización...';
+    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+  }
+
+  // --- Tu código actual continúa aquí sin cambios ---    
       const fullName = document.getElementById('lead_name').value.trim();
       const parts = fullName.split(' ');
       const firstName = parts.length > 1 ? parts.slice(0, -1).join(' ') : '';
