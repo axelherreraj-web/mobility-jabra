@@ -497,7 +497,7 @@
           <input type="hidden" name="zc_gad" id="zc_gad" value="">
           <input type="hidden" name="xmIwtLD" value="30c4da60f5ec7b4138b4d56add1859c3682c11d1fc6ae2c3f3df013e5016339fa62cd6c37c0790064dd9b4efa251035a">
           <input type="hidden" name="actionType" value="TGVhZHM=">
-          <input type="hidden" name="returnURL" value="https://jabra.mobilityglobal.net/#cotizar">
+          <input type="hidden" name="returnURL" value="https://jabra.mobilityglobal.net/gracias.html">
           <input type="hidden" id="ldeskuid" name="ldeskuid">
           <input type="hidden" id="LDTuvid" name="LDTuvid">
           <input type="hidden" name="aG9uZXlwb3Q" value="">
@@ -506,7 +506,7 @@
           <input type="hidden" id="zoho_first_name" name="First Name" value="">
           <input type="hidden" id="zoho_last_name" name="Last Name" value="">
           <input type="hidden" id="zoho_country" name="Country" value="MX">
-          <input type="hidden" id="zoho_lead_source" name="Lead Source" value="México Jabra Audio">
+          <input type="hidden" id="zoho_lead_source" name="Lead Source" value="Landing page México Jabra Audio">
           <input type="hidden" id="zoho_description" name="Description" value="">
 
           <!-- PASO 1 -->
@@ -689,8 +689,8 @@
 
   <!-- Scripts Operativos de la Landing -->
   <script>
-    const PHONE_MX = "525500000000"; // Reemplaza con tu WhatsApp corporativo de México
-    const PHONE_CO = "573000000000"; // Reemplaza con tu WhatsApp corporativo de Colombia
+    const PHONE_MX = "525610151811"; // Reemplaza con tu WhatsApp corporativo de México
+    const PHONE_CO = "573104093729"; // Reemplaza con tu WhatsApp corporativo de Colombia
     const MSG_GENERAL = encodeURIComponent("Hola Mobility Global, deseo cotizar diademas Jabra Evolve3.");
 
     function initWhatsAppLinks() {
@@ -789,7 +789,7 @@
       const countryVal = document.getElementById('lead_country_select').value;
       document.getElementById('zoho_country').value = countryVal === 'MX' ? 'México' : (countryVal === 'CO' ? 'Colombia' : 'Otro');
 
-      const leadSourceVal = countryVal === 'CO' ? 'Colombia Jabra Audio' : 'México Jabra Audio';
+      const leadSourceVal = countryVal === 'CO' ? 'Landing page Colombia Jabra Audio' : 'Landing page México Jabra Audio';
       document.getElementById('zoho_lead_source').value = leadSourceVal;
 
       // Descripción con todos los datos del perfilamiento técnico
