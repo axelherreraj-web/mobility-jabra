@@ -775,8 +775,30 @@
       ind2.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-inactive transition-all';
     }
 
+   // Validación de dominios personales no corporativos
+    function isCorporateEmail(email) {
+      const freeEmailDomains = [
+        'gmail.com', 'googlemail.com', 'hotmail.com', 'outlook.com', 
+        'live.com', 'yahoo.com', 'yahoo.es', 'icloud.com', 
+        'msn.com', 'aol.com', 'mail.com', 'protonmail.com'
+      ];
+      if (!email || !email.includes('@')) return false;
+      const domain = email.split('@')[1].toLowerCase().trim();
+      return !freeEmailDomains.includes(domain);
+    }
+    
     // Procesamiento y envío de datos a Zoho CRM
     function submitLeadToZoho() {
+      // Validación de correo corporativo B2B
+      const emailInput = document.getElementById('lead_email') || document.querySelector('input[name="Email"]');
+      const leadEmail = emailInput ? emailInput.value.trim() : '';
+      
+      if (!isCorporateEmail(leadEmail)) {
+        alert('Por favor ingresa un correo corporativo de empresa (@tuempresa.com) para recibir la cotización formal con precios por volumen.');
+        if (emailInput) emailInput.focus();
+        return false;
+      }
+      
       // 1. Evitar envíos duplicados si ya se está procesando
   if (isSubmittingLead) {
     return false;
