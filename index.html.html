@@ -736,7 +736,7 @@
       if (e.target === this) closeMediaModal();
     });
 
-    function goToStep2() {
+ function goToStep2() {
       const name = document.getElementById('lead_name').value.trim();
       const email = document.getElementById('Email').value.trim();
       const phone = document.getElementById('Mobile').value.trim();
@@ -747,13 +747,30 @@
         return;
       }
 
-      // Validar Email
+      // Validar formato de correo
       var atpos = email.indexOf('@');
       var dotpos = email.lastIndexOf('.');
       if(atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
         alert('Por favor introduce un correo corporativo válido.');
         return;
       }
+
+      // Validar que no sea un correo gratuito
+      if (!isCorporateEmail(email)) {
+        alert('Por favor ingresa un correo corporativo de empresa (@tuempresa.com) para recibir la cotización formal.');
+        document.getElementById('Email').focus();
+        return;
+      }
+
+      document.getElementById('step-1').classList.add('hidden');
+      document.getElementById('step-2').classList.remove('hidden');
+
+      const ind1 = document.getElementById('step-indicator-1');
+      const ind2 = document.getElementById('step-indicator-2');
+      ind1.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-inactive transition-all';
+      ind2.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-active transition-all';
+      ind2.querySelector('span').className = 'w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold text-[11px]';
+    }
 
       document.getElementById('step-1').classList.add('hidden');
       document.getElementById('step-2').classList.remove('hidden');
@@ -775,7 +792,7 @@
       ind2.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-inactive transition-all';
     }
 
-   // Validación de dominios personales no corporativos
+// Validación de dominios personales no corporativos
     function isCorporateEmail(email) {
       const freeEmailDomains = [
         'gmail.com', 'googlemail.com', 'hotmail.com', 'outlook.com', 
@@ -786,34 +803,37 @@
       const domain = email.split('@')[1].toLowerCase().trim();
       return !freeEmailDomains.includes(domain);
     }
+
+    // Variable global declarada correctamente para evitar el ReferenceError
+    let isSubmittingLead = false;
     
     // Procesamiento y envío de datos a Zoho CRM
     function submitLeadToZoho() {
-      // Validación de correo corporativo B2B
-      const emailInput = document.getElementById('lead_email') || document.querySelector('input[name="Email"]');
+      const emailInput = document.getElementById('Email');
       const leadEmail = emailInput ? emailInput.value.trim() : '';
       
+      // Validación de correo corporativo B2B
       if (!isCorporateEmail(leadEmail)) {
         alert('Por favor ingresa un correo corporativo de empresa (@tuempresa.com) para recibir la cotización formal con precios por volumen.');
+        goToStep1();
         if (emailInput) emailInput.focus();
         return false;
       }
       
       // 1. Evitar envíos duplicados si ya se está procesando
-  if (isSubmittingLead) {
-    return false;
-  }
-  isSubmittingLead = true;
+      if (isSubmittingLead) {
+        return false;
+      }
+      isSubmittingLead = true;
 
-  // 2. Deshabilitar visualmente el botón de envío
-  const submitBtn = document.getElementById('formsubmit') || document.querySelector('button[type="submit"]');
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerText = 'Enviando cotización...';
-    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-  }
+      // 2. Deshabilitar visualmente el botón de envío
+      const submitBtn = document.getElementById('formsubmit') || document.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Enviando cotización...';
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
 
-  // --- Tu código actual continúa aquí sin cambios ---    
       const fullName = document.getElementById('lead_name').value.trim();
       const parts = fullName.split(' ');
       const firstName = parts.length > 1 ? parts.slice(0, -1).join(' ') : '';
@@ -848,13 +868,17 @@ Comentarios: ${notes}`;
 
       // Integración Visitor Tracking SalesIQ
       try {
-        if ($zoho && $zoho.salesiq) {
+        if (typeof $zoho !== 'undefined' && $zoho.salesiq && $zoho.salesiq.visitor) {
           const ldt = document.getElementById('LDTuvid');
-          if (ldt) ldt.value = $zoho.salesiq.visitor.uniqueid();
-          $zoho.salesiq.visitor.name(fullName);
-          $zoho.salesiq.visitor.email(document.getElementById('Email').value);
+          if (ldt && typeof $zoho.salesiq.visitor.uniqueid === 'function') {
+            ldt.value = $zoho.salesiq.visitor.uniqueid();
+          }
+          if (typeof $zoho.salesiq.visitor.name === 'function') $zoho.salesiq.visitor.name(fullName);
+          if (typeof $zoho.salesiq.visitor.email === 'function') $zoho.salesiq.visitor.email(leadEmail);
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn('SalesIQ tracking bypass:', e);
+      }
 
       return true;
     }
