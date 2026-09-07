@@ -601,6 +601,13 @@
               <textarea id="profile_notes" rows="2" placeholder="Ej. Entrega programada para siguiente mes, entrega en sucursales..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"></textarea>
             </div>
 
+            <div class="flex items-start gap-2 pt-1">
+              <input type="checkbox" id="privacy_consent" required class="mt-0.5 w-4 h-4 rounded border-slate-700 bg-slate-900 accent-amber-400">
+              <label for="privacy_consent" class="text-[11px] text-slate-400 leading-snug">
+                He leído y acepto el <a href="#aviso-privacidad" class="text-amber-400 underline hover:text-amber-300">Aviso de Privacidad</a> y autorizo a Mobility Global a contactarme sobre esta solicitud.
+              </label>
+            </div>
+
             <div class="flex gap-3 pt-2">
               <button type="button" onclick="goToStep1()" class="w-1/3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-4 px-4 rounded-xl text-sm border border-slate-700 transition cursor-pointer">
                 ← Volver
@@ -628,6 +635,16 @@
         </div>
 
       </div>
+    </div>
+  </section>
+
+  <!-- Aviso de Privacidad (placeholder legal — reemplazar con el texto revisado por su equipo legal) -->
+  <section id="aviso-privacidad" class="py-14 bg-slate-950 border-t border-slate-800">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-slate-400 leading-relaxed space-y-3">
+      <h2 class="text-lg font-bold text-white mb-2">Aviso de Privacidad</h2>
+      <p>Mobility Global recaba los datos personales que proporcionas en este formulario (nombre, correo, teléfono y empresa) con la finalidad de generar una cotización, contactarte comercialmente y dar seguimiento a tu solicitud. Tus datos se almacenan en Zoho CRM y no se comparten con terceros ajenos a este fin.</p>
+      <p>En México, este tratamiento se rige por la Ley Federal de Protección de Datos Personales en Posesión de los Particulares. En Colombia, por la Ley 1581 de 2012. Puedes ejercer tus derechos de acceso, rectificación, cancelación u oposición escribiendo a [correo de contacto de privacidad de tu empresa].</p>
+      <p class="text-amber-400/80">*Texto de plantilla: sustituir por el aviso de privacidad definitivo, revisado por su equipo legal, antes de publicar.</p>
     </div>
   </section>
 
@@ -736,7 +753,7 @@
       if (e.target === this) closeMediaModal();
     });
 
- function goToStep2() {
+    function goToStep2() {
       const name = document.getElementById('lead_name').value.trim();
       const email = document.getElementById('Email').value.trim();
       const phone = document.getElementById('Mobile').value.trim();
@@ -750,7 +767,7 @@
       // Validar formato de correo
       var atpos = email.indexOf('@');
       var dotpos = email.lastIndexOf('.');
-      if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
+      if(atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
         alert('Por favor introduce un correo corporativo válido.');
         return;
       }
@@ -770,6 +787,14 @@
       ind1.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-inactive transition-all';
       ind2.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-active transition-all';
       ind2.querySelector('span').className = 'w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold text-[11px]';
+
+      // Evento de Google Ads: el lead avanzó al perfilamiento técnico (micro-conversión)
+      if (typeof gtag === 'function') {
+        gtag('event', 'generate_lead_step2', {
+          'event_category': 'engagement',
+          'event_label': 'Perfilamiento técnico iniciado'
+        });
+      }
     }
 
     function goToStep1() {
@@ -809,7 +834,15 @@
         if (emailInput) emailInput.focus();
         return false;
       }
-      
+
+      // Consentimiento de Aviso de Privacidad (requerido por políticas de Google Ads)
+      const consentBox = document.getElementById('privacy_consent');
+      if (consentBox && !consentBox.checked) {
+        alert('Debes aceptar el Aviso de Privacidad para continuar.');
+        consentBox.focus();
+        return false;
+      }
+
       // 1. Evitar envíos duplicados si ya se está procesando
       if (isSubmittingLead) {
         return false;
@@ -868,6 +901,17 @@ Comentarios: ${notes}`;
         }
       } catch (e) {
         console.warn('SalesIQ tracking bypass:', e);
+      }
+
+      // Evento de conversión de Google Ads: lead corporativo enviado a Zoho CRM.
+      // Sustituye 'AW-18420994186/XXXXXXXXXXX' por tu Conversion ID/Label real
+      // (Google Ads > Conversiones > Solicitud de propuesta > Ver detalles de etiqueta).
+      if (typeof gtag === 'function') {
+        gtag('event', 'conversion', {
+          'send_to': 'AW-18420994186/XXXXXXXXXXX',
+          'value': 1.0,
+          'currency': countryVal === 'CO' ? 'COP' : 'MXN'
+        });
       }
 
       return true;
