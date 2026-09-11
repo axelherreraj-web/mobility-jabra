@@ -696,8 +696,10 @@
       var iframe = document.getElementById('assistant-iframe');
       var isHidden = panel.classList.contains('hidden');
       if (isHidden) {
-        if (!iframe.getAttribute('src')) { iframe.src = ASISTENTE_URL; }
         panel.classList.remove('hidden');
+        if (!iframe.getAttribute('src')) {
+          requestAnimationFrame(function () { iframe.src = ASISTENTE_URL; });
+        }
       } else {
         panel.classList.add('hidden');
       }
