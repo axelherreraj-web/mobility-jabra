@@ -710,12 +710,35 @@
     const PHONE_CO = "573104093729"; // Reemplaza con tu WhatsApp corporativo de Colombia
     const MSG_GENERAL = encodeURIComponent("Hola Mobility Global, deseo cotizar diademas Jabra Evolve3.");
 
+    function registrarLeadWhatsApp(pais) {
+      // Registra un Lead en Zoho CRM en segundo plano al hacer clic en un boton de WhatsApp
+      var fd = new FormData();
+      fd.append('xnQsjsdp', '8845a052d9159becbb65207afc157d155d8adc90db9b0ddafd8a5b219499f553');
+      fd.append('zc_gad', '');
+      fd.append('xmIwtLD', '30c4da60f5ec7b4138b4d56add1859c3682c11d1fc6ae2c3f3df013e5016339fa62cd6c37c0790064dd9b4efa251035a');
+      fd.append('actionType', 'TGVhZHM=');
+      fd.append('returnURL', 'https://jabra.mobilityglobal.net/gracias.html');
+      fd.append('aG9uZXlwb3Q', '');
+      fd.append('Last Name', 'Visitante WhatsApp');
+      fd.append('Company', 'Por definir (clic WhatsApp landing)');
+      fd.append('Country', pais === 'CO' ? 'Colombia' : 'México');
+      fd.append('Lead Source', pais === 'CO' ? 'Landing page Colombia Jabra Audio' : 'Landing page México Jabra Audio');
+      fd.append('Description', 'Lead capturado automáticamente al hacer clic en el botón de WhatsApp (' + pais + ') en la landing. Completar nombre/empresa cuando el comercial hable con el cliente.');
+      try {
+        fetch('https://crm.zoho.com/crm/WebToLeadForm', { method: 'POST', mode: 'no-cors', body: fd });
+      } catch (e) {
+        // no bloquear la apertura de WhatsApp si falla el registro
+      }
+    }
+
     function initWhatsAppLinks() {
       document.querySelectorAll('.wa-btn-mx').forEach(btn => {
         btn.href = `https://wa.me/${PHONE_MX}?text=${MSG_GENERAL}`;
+        btn.addEventListener('click', function() { registrarLeadWhatsApp('MX'); });
       });
       document.querySelectorAll('.wa-btn-co').forEach(btn => {
         btn.href = `https://wa.me/${PHONE_CO}?text=${MSG_GENERAL}`;
+        btn.addEventListener('click', function() { registrarLeadWhatsApp('CO'); });
       });
     }
     initWhatsAppLinks();
