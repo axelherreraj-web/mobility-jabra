@@ -696,7 +696,7 @@
       var iframe = document.getElementById('assistant-iframe');
       var isHidden = panel.classList.contains('hidden');
       if (isHidden) {
-        if (!iframe.src) { iframe.src = ASISTENTE_URL; }
+        if (!iframe.getAttribute('src')) { iframe.src = ASISTENTE_URL; }
         panel.classList.remove('hidden');
       } else {
         panel.classList.add('hidden');
