@@ -675,6 +675,35 @@
     </button>
   </aside>
 
+  <!-- Asistente Virtual (Microsoft Copilot Studio) - boton flotante -->
+  <aside aria-label="Asistente Virtual" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+    <div id="assistant-panel" class="hidden bg-slate-950 border border-slate-700 rounded-2xl shadow-2xl mb-1 overflow-hidden" style="width:min(92vw,380px);height:min(70vh,560px);">
+      <div class="flex items-center justify-between px-3 py-2 bg-slate-900 border-b border-slate-800">
+        <p class="text-xs font-bold text-white">Asistente Virtual Mobility Global</p>
+        <button type="button" onclick="toggleAsistenteVirtual()" class="text-slate-400 hover:text-white transition" aria-label="Cerrar asistente">✕</button>
+      </div>
+      <iframe id="assistant-iframe" src="" style="width:100%;height:calc(100% - 37px);border:0;" title="Asistente Virtual Mobility Global"></iframe>
+    </div>
+    <button type="button" onclick="toggleAsistenteVirtual()" class="bg-blue-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform focus:outline-none" title="Asistente Virtual">
+      <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.05 21.5a.75.75 0 0 0 .95.95l4.332-1.388A9.955 9.955 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm-3.5 9.5h7a1 1 0 1 1 0 2h-7a1 1 0 1 1 0-2zm0-3.5h7a1 1 0 1 1 0 2h-7a1 1 0 1 1 0-2z"/></svg>
+    </button>
+  </aside>
+
+  <script>
+    var ASISTENTE_URL = "https://copilotstudio.microsoft.com/environments/Default-c0a498ff-6273-4f39-9f54-758f0377ef48/bots/cr528_asistentevirtualmobilityglo_csRZnd/webchat?__version__=2&enableFileAttachment=false";
+    function toggleAsistenteVirtual() {
+      var panel = document.getElementById('assistant-panel');
+      var iframe = document.getElementById('assistant-iframe');
+      var isHidden = panel.classList.contains('hidden');
+      if (isHidden) {
+        if (!iframe.src) { iframe.src = ASISTENTE_URL; }
+        panel.classList.remove('hidden');
+      } else {
+        panel.classList.add('hidden');
+      }
+    }
+  </script>
+
   <!-- Footer -->
   <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 space-y-2">
