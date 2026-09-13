@@ -842,11 +842,18 @@ alert('Por favor completa tu nombre, qué necesitas y un teléfono o correo de c
 return;
 }
 
-document.getElementById('waIntentForm').classList.add('hidden');
-document.getElementById('waIntentSending').classList.remove('hidden');
-
 // ¿El contacto parece un correo o un teléfono?
 var esCorreo = contacto.indexOf('@') !== -1;
+
+// Si es correo, debe ser corporativo (no gmail, hotmail, etc.)
+if (esCorreo && !isCorporateEmail(contacto)) {
+alert('Por favor ingresa un correo corporativo de empresa (@tuempresa.com) o un teléfono de contacto.');
+document.getElementById('wa_contacto').focus();
+return;
+}
+
+document.getElementById('waIntentForm').classList.add('hidden');
+document.getElementById('waIntentSending').classList.remove('hidden');
 var parts = nombre.split(' ');
 var firstName = parts.length > 1 ? parts.slice(0, -1).join(' ') : '';
 var lastName = parts.length > 1 ? parts.slice(-1).join(' ') : nombre;
