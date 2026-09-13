@@ -720,7 +720,7 @@
     $zoho.salesiq = $zoho.salesiq || {
       widgetcode: 'siqa0201d49ec15058425630dfb9eaff62412a5a2e0ab750184bccddddf65ff83cd',
       values: {},
-      ready: function(){}
+      ready: function(){ $zoho.salesiq.floatbutton.visible('hide'); }
     };
     var d = document;
     s = d.createElement('script');
