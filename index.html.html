@@ -21,6 +21,11 @@
 
   <!-- Canonical Tag -->
   <link rel="canonical" href="https://jabra.mobilityglobal.net/">
+  <!-- Preconexión al widget del Asistente Virtual (Copilot Studio) para acelerar su carga -->
+  <link rel="preconnect" href="https://copilotstudio.microsoft.com" crossorigin>
+  <link rel="preconnect" href="https://content.powerapps.com" crossorigin>
+  <link rel="dns-prefetch" href="https://copilotstudio.microsoft.com">
+  <link rel="dns-prefetch" href="https://content.powerapps.com">
 
   <!-- Open Graph / Redes Sociales & Buscadores con IA -->
   <meta property="og:type" content="website">
@@ -704,6 +709,17 @@
         panel.classList.add('hidden');
       }
     }
+  </script>
+  <script>
+      // Precargar el asistente en segundo plano para que cargue más rápido al abrirlo
+      window.addEventListener('load', function () {
+            setTimeout(function () {
+                    var iframe = document.getElementById('assistant-iframe');
+                    if (iframe && !iframe.getAttribute('src')) {
+                              iframe.src = ASISTENTE_URL;
+                    }
+            }, 2500);
+      });
   </script>
 
   <!-- Footer -->
