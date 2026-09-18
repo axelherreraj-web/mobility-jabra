@@ -229,6 +229,7 @@ Solicitar Propuesta
 <img
 src="jabra-hero.jpg"
 alt="Jabra Evolve3 Lineup"
+fetchpriority="high"
 class="w-full h-auto max-h-56 object-cover rounded-xl hover:scale-105 transition-transform duration-300"
 onerror="this.src='https://via.placeholder.com/652x300/0f172a/ffc000?text=Jabra+Evolve3+Range'"
 >
@@ -541,6 +542,16 @@ Los micrófonos Evolve3 cuentan con captación precisa de más del 99% de las pa
 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Empresa / Razón Social <span class="text-red-400">*</span></label>
 <input type="text" id="Company" name="Company" placeholder="Nombre de tu empresa" required maxlength="200" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400">
 </div>
+<div>
+<label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Volumen Requerido</label>
+<select id="profile_volume" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+<option value="1-10">1 a 10 unidades</option>
+<option value="11-50" selected>11 a 50 unidades (Pyme)</option>
+<option value="51-200">51 a 200 unidades (Corporativo)</option>
+<option value="200+">+200 unidades (Licitación / Gran Empresa)</option>
+</select>
+</div>
+
 </div>
 
 <button type="button" onclick="goToStep2()" class="w-full jabra-yellow text-slate-950 font-extrabold py-4 px-6 rounded-xl text-base tracking-wide transition-all shadow-lg mt-4 flex items-center justify-center gap-2 cursor-pointer">
@@ -553,16 +564,6 @@ Los micrófonos Evolve3 cuentan con captación precisa de más del 99% de las pa
 <div id="step-2" class="space-y-4 hidden">
 
 <div class="grid sm:grid-cols-2 gap-4">
-<div>
-<label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Volumen Requerido</label>
-<select id="profile_volume" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
-<option value="1-10">1 a 10 unidades</option>
-<option value="11-50" selected>11 a 50 unidades (Pyme)</option>
-<option value="51-200">51 a 200 unidades (Corporativo)</option>
-<option value="200+">+200 unidades (Licitación / Gran Empresa)</option>
-</select>
-</div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Entorno de Trabajo Principal</label>
 <select id="profile_environment" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
@@ -645,6 +646,7 @@ Un especialista comercial de Mobility Global revisará tus especificaciones y te
 <h2 class="text-lg font-bold text-white mb-2">Aviso de Privacidad</h2>
 <p>Mobility Global recaba los datos personales que proporcionas en este formulario (nombre, correo, teléfono y empresa) con la finalidad de generar una cotización, contactarte comercialmente y dar seguimiento a tu solicitud. Tus datos se almacenan en Zoho CRM y no se comparten con terceros ajenos a este fin.</p>
 <p>En México, este tratamiento se rige por la Ley Federal de Protección de Datos Personales en Posesión de los Particulares. En Colombia, por la Ley 1581 de 2012. Puedes ejercer tus derechos de acceso, rectificación, cancelación u oposición escribiendo a [correo de contacto de privacidad de tu empresa].</p>
+<p class="text-amber-400/80">*Texto de plantilla: sustituir por el aviso de privacidad definitivo, revisado por su equipo legal, antes de publicar.</p>
 </div>
 </section>
 
@@ -988,12 +990,8 @@ return;
 // ¿El contacto parece un correo o un teléfono?
 var esCorreo = contacto.indexOf('@') !== -1;
 
-// Si es correo, debe ser corporativo (no gmail, hotmail, etc.)
-if (esCorreo && !isCorporateEmail(contacto)) {
-alert('Por favor ingresa un correo corporativo de empresa (@tuempresa.com) o un teléfono de contacto.');
-document.getElementById('wa_contacto').focus();
-return;
-}
+// Correo personal: tampoco se bloquea aqui. Solo se marca para revision.
+var waNoCorporativo = esCorreo && !isCorporateEmail(contacto);
 
 document.getElementById('waIntentForm').classList.add('hidden');
 document.getElementById('waIntentSending').classList.remove('hidden');
@@ -1015,12 +1013,23 @@ fd.append('Company', 'Por definir (WhatsApp landing)');
 fd.append('Country', waIntentPais === 'CO' ? 'Colombia' : 'México');
 fd.append('Lead Source', 'WhatsApp - seguimiento directo');
 if (esCorreo) { fd.append('Email', contacto); } else { fd.append('Mobile', contacto); }
-fd.append('Description', 'Lead capturado en el formulario previo a WhatsApp (' + waIntentPais + '). Intención: ' + intencion + '. Contacto proporcionado: ' + contacto + '.');
+fd.append('Description', '[LEAD WHATSAPP - sin perfilar]' + (waNoCorporativo ? ' (correo personal)' : '') + '\nSin volumen ni plataforma: no comparable con la calificacion B2B del formulario.\nLead capturado en el formulario previo a WhatsApp (' + waIntentPais + '). Intención: ' + intencion + '. Contacto proporcionado: ' + contacto + '.');
 
 try {
-fetch('https://crm.zoho.com/crm/WebToLeadForm', { method: 'POST', mode: 'no-cors', body: fd });
+fetch('https://crm.zoho.com/crm/WebToLeadForm', { method: 'POST', mode: 'no-cors', body: fd }).catch(function(){});
 } catch (e) {
 // no bloquear la apertura de WhatsApp si falla el registro
+}
+
+// Conversion de Google Ads: "Lead WhatsApp" (categoria Contacto).
+// Este camino NO pasa por /gracias.html, por eso necesita su propio evento.
+// El formulario de cotizacion NO debe tener uno: ese ya se mide por regla de URL.
+if (typeof gtag === 'function') {
+gtag('event', 'conversion', {
+'send_to': 'AW-18420994186/y--xCOam1fscEIqh6M9E',
+'value': 1.0,
+'currency': waIntentPais === 'CO' ? 'COP' : 'MXN'
+});
 }
 
 var numero = waIntentPais === 'CO' ? PHONE_CO : PHONE_MX;
@@ -1102,12 +1111,8 @@ alert('Por favor introduce un correo corporativo válido.');
 return;
 }
 
-// Validar que no sea un correo gratuito
-if (!isCorporateEmail(email)) {
-alert('Por favor ingresa un correo corporativo de empresa (@tuempresa.com) para recibir la cotización formal.');
-document.getElementById('Email').focus();
-return;
-}
+// Aqui NO se bloquea a nadie. La calificacion B2B se calcula al enviar
+// (ver calificarLeadB2B) y llega a Zoho como etiqueta para que ventas priorice.
 
 document.getElementById('step-1').classList.add('hidden');
 document.getElementById('step-2').classList.remove('hidden');
@@ -1137,6 +1142,27 @@ ind1.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text
 ind2.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-inactive transition-all';
 }
 
+// Calificacion B2B: el peso lo lleva el VOLUMEN, no el dominio del correo.
+// Un Gmail pidiendo 200 unidades vale mas que un correo de empresa pidiendo 1.
+function calificarLeadB2B(volumen, empresa, plataforma, correo) {
+var puntos = 0;
+var detalle = [];
+
+var porVolumen = { '200+': 7, '51-200': 6, '11-50': 4, '1-10': 0 };
+var pv = porVolumen[volumen] !== undefined ? porVolumen[volumen] : 0;
+puntos += pv;
+detalle.push('volumen ' + volumen + ' (+' + pv + ')');
+
+if (empresa && empresa.trim().length >= 3) { puntos += 1; detalle.push('empresa (+1)'); }
+if (plataforma && plataforma.trim() !== '') { puntos += 1; detalle.push('plataforma (+1)'); }
+
+if (correo && isCorporateEmail(correo)) { puntos += 1; detalle.push('correo corporativo (+1)'); }
+else { detalle.push('correo personal (+0)'); }
+
+var nivel = puntos >= 7 ? 'B2B ALTO' : (puntos >= 3 ? 'B2B MEDIO' : 'B2B BAJO - REVISAR');
+return { nivel: nivel, puntos: puntos, detalle: detalle.join(', ') };
+}
+
 // Validación de dominios personales no corporativos
 function isCorporateEmail(email) {
 const freeEmailDomains = [
@@ -1157,13 +1183,6 @@ function submitLeadToZoho() {
 const emailInput = document.getElementById('Email');
 const leadEmail = emailInput ? emailInput.value.trim() : '';
 
-// Validación de correo corporativo B2B
-if (!isCorporateEmail(leadEmail)) {
-alert('Por favor ingresa un correo corporativo de empresa (@tuempresa.com) para recibir la cotización formal con precios por volumen.');
-goToStep1();
-if (emailInput) emailInput.focus();
-return false;
-}
 
 // Consentimiento de Aviso de Privacidad (requerido por políticas de Google Ads)
 const consentBox = document.getElementById('privacy_consent');
@@ -1209,7 +1228,10 @@ const platform = document.getElementById('profile_platform').value;
 const extras = document.getElementById('profile_extras').value;
 const notes = document.getElementById('profile_notes').value;
 
-const fullDesc = `[SOLICITUD WEB JABRA EVOLVE3]
+const calif = calificarLeadB2B(volume, document.getElementById('Company').value, platform, leadEmail);
+
+const fullDesc = `[${calif.nivel}] ${calif.puntos}/10 — ${calif.detalle}
+[SOLICITUD WEB JABRA EVOLVE3]
 Fuente: ${leadSourceVal}
 Volumen: ${volume}
 Entorno de Trabajo: ${env}
@@ -1233,16 +1255,11 @@ if (typeof $zoho.salesiq.visitor.email === 'function') $zoho.salesiq.visitor.ema
 console.warn('SalesIQ tracking bypass:', e);
 }
 
-// Evento de conversión de Google Ads: lead corporativo enviado a Zoho CRM.
-// Sustituye 'AW-18420994186/XXXXXXXXXXX' por tu Conversion ID/Label real
-// (Google Ads > Conversiones > Solicitud de propuesta > Ver detalles de etiqueta).
-if (typeof gtag === 'function') {
-gtag('event', 'conversion', {
-'send_to': 'AW-18420994186/XXXXXXXXXXX',
-'value': 1.0,
-'currency': countryVal === 'CO' ? 'COP' : 'MXN'
-});
-}
+// NO agregar aqui un evento de conversion de Google Ads.
+// Este formulario hace POST nativo a Zoho y redirige a /gracias.html, donde la
+// etiqueta de Google ya registra la conversion por regla de URL (verificado en
+// Ads > Conversiones > Envio de formulario para clientes potenciales > Pagina web).
+// Duplicarlo aqui contaria dos veces cada lead y ensuciaria Smart Bidding.
 
 return true;
 }
