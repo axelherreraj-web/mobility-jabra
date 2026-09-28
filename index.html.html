@@ -503,6 +503,11 @@ Los micrófonos Evolve3 cuentan con captación precisa de más del 99% de las pa
 <input type="hidden" id="ldeskuid" name="ldeskuid">
 <input type="hidden" id="LDTuvid" name="LDTuvid">
 <input type="hidden" name="aG9uZXlwb3Q" value="">
+<div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden">
+<label>Deja este campo vacío</label>
+<input type="text" id="mg_hp_form" tabindex="-1" autocomplete="off">
+</div>
+
 
 <!-- Campos Ocultos para mapeo Zoho CRM -->
 <input type="hidden" id="zoho_first_name" name="First Name" value="">
@@ -683,6 +688,11 @@ Antes de abrir WhatsApp
 <div>
 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Teléfono o correo <span class="text-red-400">*</span></label>
 <input type="text" id="wa_contacto" placeholder="Ej. 55 1234 5678 o ana@empresa.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400">
+<div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden">
+<label>Deja este campo vacío</label>
+<input type="text" id="mg_hp_wa" tabindex="-1" autocomplete="off">
+</div>
+
 </div>
 
 <button type="button" onclick="submitWaIntent()" class="w-full whatsapp-green text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg flex items-center justify-center gap-2">
@@ -959,6 +969,7 @@ const PHONE_CO = "573104093729"; // Reemplaza con tu WhatsApp corporativo de Col
 var waIntentPais = 'MX';
 
 function abrirWaIntentModal(pais) {
+MG_MODAL_ABIERTO = Date.now();
 waIntentPais = pais;
 document.getElementById('wa_nombre').value = '';
 document.getElementById('wa_intencion').value = '';
@@ -982,10 +993,35 @@ var nombre = document.getElementById('wa_nombre').value.trim();
 var intencion = document.getElementById('wa_intencion').value;
 var contacto = document.getElementById('wa_contacto').value.trim();
 
+// --- Guardas antispam (silenciosas: el bot no debe aprender que fue detectado) ---
+// 1. Campo trampa oculto: solo un bot lo llena.
+// 2. Menos de 3 segundos desde que se abrio el modal: no es humano.
+// 3. Mas de 3 envios en la misma sesion: abuso.
+if (mgHoneypotLleno('mg_hp_wa') ||
+    mgDemasiadoRapido(MG_MODAL_ABIERTO || MG_CARGA, 3000) ||
+    mgLimiteEnviosAlcanzado()) {
+  document.getElementById('waIntentForm').classList.add('hidden');
+  document.getElementById('waIntentSending').classList.remove('hidden');
+  setTimeout(function () {
+    document.getElementById('waIntentSending').classList.add('hidden');
+    document.getElementById('waIntentOk').classList.remove('hidden');
+  }, 900);
+  return;
+}
+
 if (!nombre || !intencion || !esContactoValido(contacto)) {
 alert('Por favor completa tu nombre, qué necesitas y un teléfono o correo de contacto.');
 return;
 }
+
+// El contacto debe ser un telefono con al menos 10 digitos o un correo bien formado
+if (!mgContactoRealista(contacto)) {
+alert('Escribe un teléfono a 10 dígitos o un correo válido para poder responderte.');
+document.getElementById('wa_contacto').focus();
+return;
+}
+
+mgRegistrarEnvio();
 
 // ¿El contacto parece un correo o un teléfono?
 var esCorreo = contacto.indexOf('@') !== -1;
@@ -1142,6 +1178,45 @@ ind1.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text
 ind2.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold step-inactive transition-all';
 }
 
+// ------- ANTISPAM -------
+// No discrimina por dominio de correo. Ataca lo que hacen los bots:
+// llenar campos ocultos, enviar en menos de N segundos y repetir sin parar.
+var MG_CARGA = Date.now();
+var MG_MODAL_ABIERTO = 0;
+
+function mgHoneypotLleno(id) {
+  var el = document.getElementById(id);
+  return !!(el && el.value && el.value.trim() !== '');
+}
+
+function mgDemasiadoRapido(desde, minimoMs) {
+  return (Date.now() - desde) < minimoMs;
+}
+
+function mgLimiteEnviosAlcanzado() {
+  try {
+    var n = parseInt(sessionStorage.getItem('mg_envios') || '0', 10);
+    return n >= 3;
+  } catch (e) { return false; }
+}
+
+function mgRegistrarEnvio() {
+  try {
+    var n = parseInt(sessionStorage.getItem('mg_envios') || '0', 10);
+    sessionStorage.setItem('mg_envios', String(n + 1));
+  } catch (e) {}
+}
+
+// Un telefono real trae al menos 10 digitos; un correo real trae usuario@dominio.tld
+function mgContactoRealista(valor) {
+  if (!valor) return false;
+  valor = valor.trim();
+  if (valor.indexOf('@') !== -1) {
+    return /^[^\s@]+@[^\s@.]+\.[a-zA-Z]{2,}$/.test(valor);
+  }
+  return (valor.match(/\d/g) || []).length >= 10;
+}
+
 // Calificacion B2B: el peso lo lleva el VOLUMEN, no el dominio del correo.
 // Un Gmail pidiendo 200 unidades vale mas que un correo de empresa pidiendo 1.
 function calificarLeadB2B(volumen, empresa, plataforma, correo) {
@@ -1192,10 +1267,20 @@ consentBox.focus();
 return false;
 }
 
+// --- Guardas antispam (silenciosas) ---
+if (mgHoneypotLleno('mg_hp_form') ||
+    mgDemasiadoRapido(MG_CARGA, 5000) ||
+    mgLimiteEnviosAlcanzado()) {
+  // NO redirigir a gracias.html: esa URL dispara la conversion de formulario en
+  // Google Ads. El bot simplemente no obtiene nada.
+  return false;
+}
+
 // 1. Evitar envíos duplicados si ya se está procesando
 if (isSubmittingLead) {
 return false;
 }
+mgRegistrarEnvio();
 isSubmittingLead = true;
 
 // 2. Deshabilitar visualmente el botón de envío
