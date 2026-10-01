@@ -1086,11 +1086,12 @@ fd.append('returnURL', 'https://jabra.mobilityglobal.net/gracias.html');
 fd.append('aG9uZXlwb3Q', '');
 fd.append('First Name', firstName);
 fd.append('Last Name', lastName);
-fd.append('Company', 'Por definir (WhatsApp landing)');
+fd.append('Company', 'Por definir (WhatsApp landing audio)');
 fd.append('Country', waIntentPais === 'CO' ? 'Colombia' : 'México');
-fd.append('Lead Source', 'WhatsApp - seguimiento directo');
+/* Misma convención que la landing de video: fuente por país. */
+fd.append('Lead Source', waIntentPais === 'CO' ? 'WhatsApp Colombia Jabra Audio' : 'WhatsApp México Jabra Audio');
 if (esCorreo) { fd.append('Email', contacto); } else { fd.append('Mobile', contacto); }
-fd.append('Description', '[LEAD WHATSAPP - sin perfilar]' + (waNoCorporativo ? ' (correo personal)' : '') + '\nSin volumen ni plataforma: no comparable con la calificacion B2B del formulario.\nLead capturado en el formulario previo a WhatsApp (' + waIntentPais + '). Intención: ' + intencion + '. Contacto proporcionado: ' + contacto + '.');
+fd.append('Description', '[LEAD WHATSAPP - landing de audio]' + (waNoCorporativo ? ' (correo personal)' : '') + '\nSin volumen ni plataforma: no comparable con la calificacion B2B del formulario.\nLead capturado en el formulario previo a WhatsApp (' + waIntentPais + '). Intención: ' + intencion + '. Contacto proporcionado: ' + contacto + '.');
 
 try {
 fetch('https://crm.zoho.com/crm/WebToLeadForm', { method: 'POST', mode: 'no-cors', body: fd }).catch(function(){});
