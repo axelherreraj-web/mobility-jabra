@@ -550,8 +550,9 @@ Los micrófonos Evolve3 cuentan con captación precisa de más del 99% de las pa
 <div>
 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Volumen Requerido</label>
 <select id="profile_volume" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+<option value="" disabled selected>Elige cuántas diademas necesitas</option>
 <option value="1-10">1 a 10 unidades</option>
-<option value="11-50" selected>11 a 50 unidades (Pyme)</option>
+<option value="11-50">11 a 50 unidades (Pyme)</option>
 <option value="51-200">51 a 200 unidades (Corporativo)</option>
 <option value="200+">+200 unidades (Licitación / Gran Empresa)</option>
 </select>
@@ -572,6 +573,7 @@ Los micrófonos Evolve3 cuentan con captación precisa de más del 99% de las pa
 <div>
 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Entorno de Trabajo Principal</label>
 <select id="profile_environment" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+<option value="" disabled selected>Elige el entorno</option>
 <option value="hybrid">Trabajo Híbrido / Movilidad (Evolve3 65 Flex)</option>
 <option value="open-office">Oficina Abierta / Call Center (Evolve3 45/65)</option>
 <option value="executive">Dirección / Concentración (Evolve3 75/85)</option>
@@ -584,6 +586,7 @@ Los micrófonos Evolve3 cuentan con captación precisa de más del 99% de las pa
 <div>
 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Plataforma de Comunicaciones</label>
 <select id="profile_platform" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+<option value="" disabled selected>Elige la plataforma</option>
 <option value="teams">Microsoft Teams</option>
 <option value="zoom">Zoom</option>
 <option value="meet">Google Meet</option>
@@ -595,6 +598,7 @@ Los micrófonos Evolve3 cuentan con captación precisa de más del 99% de las pa
 <div>
 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Requerimientos Adicionales</label>
 <select id="profile_extras" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
+<option value="" disabled selected>Elige una opción</option>
 <option value="warranty">Garantía Estándar Oficial (2 años)</option>
 <option value="demo">Solicitud de Unidad Demo de Prueba</option>
 <option value="cfdi-dian">Facturación Inmediata (CFDI / DIAN)</option>
@@ -1187,11 +1191,27 @@ alert('Por favor completa todos los campos obligatorios antes de continuar.');
 return;
 }
 
+// El telefono debe ser marcable: 10 a 15 digitos
+if (!mgTelefonoUsable(phone)) {
+alert('Escribe un teléfono a 10 dígitos para que podamos contactarte.');
+document.getElementById('Mobile').focus();
+return;
+}
+
 // Validar formato de correo
 var atpos = email.indexOf('@');
 var dotpos = email.lastIndexOf('.');
 if(atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
 alert('Por favor introduce un correo corporativo válido.');
+return;
+}
+
+// El volumen ya no trae valor por defecto: hay que elegirlo (antes 12 de 13 leads
+// llegaban con el 11-50 preseleccionado y la calificacion B2B no medía nada).
+var volSel = document.getElementById('profile_volume');
+if (volSel && !volSel.value) {
+alert('Elige cuántas diademas necesitas para continuar.');
+volSel.focus();
 return;
 }
 
@@ -1311,6 +1331,12 @@ function mgContactoRealista(valor) {
 
 // Calificacion B2B: el peso lo lleva el VOLUMEN, no el dominio del correo.
 // Un Gmail pidiendo 200 unidades vale mas que un correo de empresa pidiendo 1.
+function mgTelefonoUsable(valor) {
+  if (!valor) return false;
+  var d = (valor.match(/\d/g) || []).length;
+  return d >= 10 && d <= 15;
+}
+
 function calificarLeadB2B(volumen, empresa, plataforma, correo) {
 var puntos = 0;
 var detalle = [];
@@ -1350,6 +1376,16 @@ function submitLeadToZoho() {
 const emailInput = document.getElementById('Email');
 const leadEmail = emailInput ? emailInput.value.trim() : '';
 
+
+// Perfilamiento técnico: sin valores por defecto, hay que elegirlos
+var faltantes = [['profile_environment','el entorno de trabajo'],['profile_platform','la plataforma'],['profile_extras','el requerimiento']]
+  .filter(function(p){ var el = document.getElementById(p[0]); return el && !el.value; });
+if (faltantes.length) {
+var nombres = faltantes.map(function(p){ return p[1]; });
+alert('Elige ' + (nombres.length > 1 ? nombres.slice(0,-1).join(', ') + ' y ' + nombres[nombres.length-1] : nombres[0]) + ' para enviar tu solicitud.');
+document.getElementById(faltantes[0][0]).focus();
+return false;
+}
 
 // Consentimiento de Aviso de Privacidad (requerido por políticas de Google Ads)
 const consentBox = document.getElementById('privacy_consent');
