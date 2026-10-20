@@ -1118,6 +1118,17 @@ if (waIntentPais === 'MX' && contacto.indexOf('@') === -1) {
   }
 }
 
+// México + correo: si el dominio es de relleno (empresa.com, ejemplo.com, test.com...) se rechaza con aviso.
+// Solo dominios de la lista de relleno. Un dominio que no existe o sin MX NO se bloquea: queda como bandera en Zoho.
+if (waIntentPais === 'MX' && contacto.indexOf('@') !== -1) {
+  var domWa = contacto.toLowerCase().slice(contacto.lastIndexOf('@') + 1).replace(/^\.+|\.+$/g, '');
+  if (MG_DOMINIOS_RELLENO.indexOf(domWa) !== -1) {
+    alert('Ese correo no parece real. Escribe tu celular a 10 dígitos o un correo válido para poder responderte.');
+    document.getElementById('wa_contacto').focus();
+    return;
+  }
+}
+
 mgRegistrarEnvio();
 
 // ¿El contacto parece un correo o un teléfono?
