@@ -660,7 +660,7 @@ Un especialista comercial de Mobility Global revisará tus especificaciones y te
 
 <!-- Modal de Intención Previa a WhatsApp (Nombre + Intención + Teléfono/Correo) -->
 <div id="waIntentModal" class="fixed inset-0 z-[60] hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
-<div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm shadow-2xl relative overflow-hidden">
+<div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm shadow-2xl relative overflow-y-auto max-h-[92vh]">
 <div class="flex items-center justify-between px-5 py-4 border-b border-slate-800 bg-slate-950/70">
 <h3 class="text-sm font-bold text-white flex items-center gap-2">
 <span class="w-6 h-6 rounded-md whatsapp-green flex items-center justify-center text-xs">✆</span>
@@ -679,13 +679,39 @@ Antes de abrir WhatsApp
 
 <div>
 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">¿Qué necesitas? <span class="text-red-400">*</span></label>
-<select id="wa_intencion" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400">
+<select id="wa_intencion" onchange="waActualizarOrientacion()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400">
 <option value="">Selecciona una opción</option>
 <option>Cotizar diademas Jabra</option>
 <option>Soporte técnico</option>
 <option>Información de otro producto</option>
 <option>Otro</option>
 </select>
+</div>
+
+<!-- Orientación de la cotización: solo México y solo si piden cotizar. Opcional: no bloquea ni califica. -->
+<div id="waOrientacion" class="hidden space-y-3">
+<p class="text-[11px] text-slate-500 -mt-1">Opcional: nos ayuda a orientar tu cotización.</p>
+<div>
+<label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">¿Cuántas diademas?</label>
+<select id="wa_volumen" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400">
+<option value="">Aún no lo sé</option>
+<option value="1-10">1 a 10 unidades</option>
+<option value="11-50">11 a 50 unidades</option>
+<option value="51-200">51 a 200 unidades</option>
+<option value="200+">Más de 200 unidades</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">¿Qué plataforma usan?</label>
+<select id="wa_plataforma" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400">
+<option value="">Aún no lo sé</option>
+<option value="teams">Microsoft Teams</option>
+<option value="zoom">Zoom</option>
+<option value="meet">Google Meet</option>
+<option value="cisco-avaya">Telefonía IP / Avaya / Cisco</option>
+<option value="other">Varias plataformas</option>
+</select>
+</div>
 </div>
 
 <div>
@@ -1019,10 +1045,22 @@ waIntentPais = pais;
 document.getElementById('wa_nombre').value = '';
 document.getElementById('wa_intencion').value = '';
 document.getElementById('wa_contacto').value = '';
+document.getElementById('wa_volumen').value = '';
+document.getElementById('wa_plataforma').value = '';
+waActualizarOrientacion();
 document.getElementById('waIntentForm').classList.remove('hidden');
 document.getElementById('waIntentSending').classList.add('hidden');
 document.getElementById('waIntentOk').classList.add('hidden');
 document.getElementById('waIntentModal').classList.remove('hidden');
+}
+
+// Las dos preguntas de orientación solo se muestran en México y solo cuando piden cotizar.
+// Colombia queda igual: ahí el modal de dos campos es justo lo que está convirtiendo.
+function waActualizarOrientacion() {
+var box = document.getElementById('waOrientacion');
+if (!box) return;
+var mostrar = waIntentPais === 'MX' && document.getElementById('wa_intencion').value === 'Cotizar diademas Jabra';
+box.classList.toggle('hidden', !mostrar);
 }
 
 function closeWaIntentModal() {
@@ -1066,6 +1104,20 @@ document.getElementById('wa_contacto').focus();
 return;
 }
 
+// México + teléfono: se normaliza (quita +52, 52, 044, 045, 01) y se rechazan los números inventados
+// (5555555555, 1234567890, lada que empieza en 0 o 1, secuencias, bloques repetidos).
+// Aquí sí se rechaza con aviso: es un teléfono que la persona acaba de teclear y puede corregir,
+// o dejar un correo en su lugar.
+if (waIntentPais === 'MX' && contacto.indexOf('@') === -1) {
+  var telMxWa = mgNormalizarTelMX(contacto);
+  var motivoTel = telMxWa.length !== 10 ? 'longitud' : (/^[01]/.test(telMxWa) ? 'lada invalida' : mgTelefonoFalso(telMxWa));
+  if (motivoTel) {
+    alert('Ese teléfono no parece válido. Escribe tu celular a 10 dígitos (sin 044 ni 01) o déjanos un correo para responderte.');
+    document.getElementById('wa_contacto').focus();
+    return;
+  }
+}
+
 mgRegistrarEnvio();
 
 // ¿El contacto parece un correo o un teléfono?
@@ -1074,39 +1126,65 @@ var esCorreo = contacto.indexOf('@') !== -1;
 /* Si ya se registró desde este navegador, solo abre WhatsApp: sin lead nuevo ni conversión. */
 var yaRegistrado = esCorreo ? mgYaRegistrado(contacto, '') : mgYaRegistrado('', contacto);
 
-// Correo personal: tampoco se bloquea aqui. Solo se marca para revision.
-var waNoCorporativo = esCorreo && !isCorporateEmail(contacto);
-
 document.getElementById('waIntentForm').classList.add('hidden');
 document.getElementById('waIntentSending').classList.remove('hidden');
 var parts = nombre.split(' ');
 var firstName = parts.length > 1 ? parts.slice(0, -1).join(' ') : '';
 var lastName = parts.length > 1 ? parts.slice(-1).join(' ') : nombre;
+var paisWa = waIntentPais;
 
-// Registra el Lead real en Zoho CRM con los datos capturados
-var fd = new FormData();
-fd.append('xnQsjsdp', '8845a052d9159becbb65207afc157d155d8adc90db9b0ddafd8a5b219499f553');
-fd.append('zc_gad', mgGclid());
-fd.append('xmIwtLD', '30c4da60f5ec7b4138b4d56add1859c3682c11d1fc6ae2c3f3df013e5016339fa62cd6c37c0790064dd9b4efa251035a');
-fd.append('actionType', 'TGVhZHM=');
-fd.append('returnURL', 'https://jabra.mobilityglobal.net/gracias.html');
-fd.append('aG9uZXlwb3Q', '');
-fd.append('First Name', firstName);
-fd.append('Last Name', lastName);
-fd.append('Company', 'Por definir (WhatsApp landing audio)');
-fd.append('Country', waIntentPais === 'CO' ? 'Colombia' : 'México');
-/* Misma convención que la landing de video: fuente por país. */
-fd.append('Lead Source', waIntentPais === 'CO' ? 'WhatsApp Colombia Jabra Audio' : 'WhatsApp México Jabra Audio');
-if (esCorreo) { fd.append('Email', contacto); } else { fd.append('Mobile', contacto); }
-fd.append('Description', '[LEAD WHATSAPP - landing de audio]' + (waNoCorporativo ? ' (correo personal)' : '') + '\nSin volumen ni plataforma: no comparable con la calificacion B2B del formulario.\nLead capturado en el formulario previo a WhatsApp (' + waIntentPais + '). Intención: ' + intencion + '. Contacto proporcionado: ' + contacto + '.');
+// Orientación opcional (solo México, solo cotizaciones). Ayuda al asesor; NO entra a la calificación B2B.
+var orientVol = '', orientPlat = '';
+if (paisWa === 'MX' && intencion === 'Cotizar diademas Jabra') {
+  orientVol = (document.getElementById('wa_volumen') || {}).value || '';
+  orientPlat = (document.getElementById('wa_plataforma') || {}).value || '';
+}
+var etiquetasVol = { '1-10': '1 a 10', '11-50': '11 a 50', '51-200': '51 a 200', '200+': 'más de 200' };
+var etiquetasPlat = { 'teams': 'Microsoft Teams', 'zoom': 'Zoom', 'meet': 'Google Meet', 'cisco-avaya': 'telefonía IP (Avaya/Cisco)', 'other': 'varias plataformas' };
+
+// Registra el Lead real en Zoho CRM con los datos capturados.
+// Se ejecuta ya con el resultado de la verificación del dominio (si el contacto es un correo).
+function registrarLeadWa() {
+  // Correo personal o dudoso: tampoco se bloquea aqui. Solo se marca para revision.
+  var estadoCorreo = esCorreo ? mgCorreoEstado(contacto) : null;
+  var telMx = (!esCorreo && paisWa === 'MX') ? mgNormalizarTelMX(contacto) : '';
+  var banderas = mgBanderas(nombre, '', esCorreo ? contacto : '', esCorreo ? '' : contacto, paisWa === 'MX' ? 'MX' : 'CO');
+
+  var fd = new FormData();
+  fd.append('xnQsjsdp', '8845a052d9159becbb65207afc157d155d8adc90db9b0ddafd8a5b219499f553');
+  fd.append('zc_gad', mgGclid());
+  fd.append('xmIwtLD', '30c4da60f5ec7b4138b4d56add1859c3682c11d1fc6ae2c3f3df013e5016339fa62cd6c37c0790064dd9b4efa251035a');
+  fd.append('actionType', 'TGVhZHM=');
+  fd.append('returnURL', 'https://jabra.mobilityglobal.net/gracias.html');
+  fd.append('aG9uZXlwb3Q', '');
+  fd.append('First Name', firstName);
+  fd.append('Last Name', lastName);
+  fd.append('Company', 'Por definir (WhatsApp landing audio)');
+  fd.append('Country', paisWa === 'CO' ? 'Colombia' : 'México');
+  /* Misma convención que la landing de video: fuente por país. */
+  fd.append('Lead Source', paisWa === 'CO' ? 'WhatsApp Colombia Jabra Audio' : 'WhatsApp México Jabra Audio');
+  if (esCorreo) { fd.append('Email', contacto); } else { fd.append('Mobile', telMx.length === 10 ? telMx : contacto); }
+
+  var lineaCalif = (orientVol || orientPlat)
+    ? 'Orientación autodeclarada (opcional, solo orienta la cotizacion): volumen ' + (orientVol || 'sin indicar') + ' · plataforma ' + (orientPlat || 'sin indicar') + '. No entra a la calificacion B2B del formulario.'
+    : 'Sin volumen ni plataforma: no comparable con la calificacion B2B del formulario.';
+  fd.append('Description', (banderas.length ? banderas.join('\n') + '\n' : '') + '[LEAD WHATSAPP - landing de audio]' + (estadoCorreo && estadoCorreo.tipo === 'personal' ? ' (correo personal)' : '') + '\n' + lineaCalif + '\nLead capturado en el formulario previo a WhatsApp (' + paisWa + '). Intención: ' + intencion + '. Contacto proporcionado: ' + contacto + '.');
+
+  try {
+    fetch('https://crm.zoho.com/crm/WebToLeadForm', { method: 'POST', mode: 'no-cors', body: fd }).catch(function(){});
+  } catch (e) {
+    // no bloquear la apertura de WhatsApp si falla el registro
+  }
+  mgGuardarRegistro(esCorreo ? contacto : '', esCorreo ? '' : contacto, 'whatsapp');
+}
 
 if (!yaRegistrado) {
-try {
-fetch('https://crm.zoho.com/crm/WebToLeadForm', { method: 'POST', mode: 'no-cors', body: fd }).catch(function(){});
-} catch (e) {
-// no bloquear la apertura de WhatsApp si falla el registro
-}
-mgGuardarRegistro(esCorreo ? contacto : '', esCorreo ? '' : contacto, 'whatsapp');
+  if (esCorreo) {
+    // Espera como máximo 1.5 s al resultado del dominio; si tarda, el lead se registra igual sin esa marca.
+    Promise.race([mgVerificarMX(contacto), new Promise(function (r) { setTimeout(r, 1500); })]).then(registrarLeadWa, registrarLeadWa);
+  } else {
+    registrarLeadWa();
+  }
 }
 
 // Conversion de Google Ads: "Lead WhatsApp" (categoria Contacto).
@@ -1121,7 +1199,9 @@ gtag('event', 'conversion', {
 }
 
 var numero = waIntentPais === 'CO' ? PHONE_CO : PHONE_MX;
-var mensaje = encodeURIComponent('Hola Mobility Global, soy ' + nombre + '. Deseo: ' + intencion + '.');
+var mensaje = encodeURIComponent('Hola Mobility Global, soy ' + nombre + '. Deseo: ' + intencion + '.'
+  + (orientVol ? ' Cantidad aproximada: ' + etiquetasVol[orientVol] + ' diademas.' : '')
+  + (orientPlat ? ' Plataforma: ' + etiquetasPlat[orientPlat] + '.' : ''));
 
 setTimeout(function () {
 document.getElementById('waIntentSending').classList.add('hidden');
@@ -1205,6 +1285,10 @@ if(atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
 alert('Por favor introduce un correo corporativo válido.');
 return;
 }
+
+// Verificacion del dominio del correo en segundo plano (no bloquea ni espera):
+// para cuando el usuario termine el paso 2, el resultado ya esta listo.
+mgVerificarMX(email);
 
 // El volumen ya no trae valor por defecto: hay que elegirlo (antes 12 de 13 leads
 // llegaban con el 11-50 preseleccionado y la calificacion B2B no medía nada).
@@ -1346,26 +1430,260 @@ var pv = porVolumen[volumen] !== undefined ? porVolumen[volumen] : 0;
 puntos += pv;
 detalle.push('volumen ' + volumen + ' (+' + pv + ')');
 
-if (empresa && empresa.trim().length >= 3) { puntos += 1; detalle.push('empresa (+1)'); }
+// El punto de "empresa" solo cuenta si el nombre no es relleno ni texto ilegible.
+var empresaOk = empresa && empresa.trim().length >= 3 && !mgEmpresaRelleno(empresa) && mgTextoIlegible(empresa, false).length === 0;
+if (empresaOk) { puntos += 1; detalle.push('empresa (+1)'); }
+else if (empresa && empresa.trim().length >= 3) { detalle.push('empresa dudosa (+0)'); }
 if (plataforma && plataforma.trim() !== '') { puntos += 1; detalle.push('plataforma (+1)'); }
 
-if (correo && isCorporateEmail(correo)) { puntos += 1; detalle.push('correo corporativo (+1)'); }
+// El punto de "correo corporativo" solo cuenta si el correo pasa las validaciones de abajo.
+var estadoCorreo = mgCorreoEstado(correo);
+if (estadoCorreo.tipo === 'corporativo') { puntos += 1; detalle.push('correo corporativo (+1)'); }
+else if (estadoCorreo.tipo === 'dudoso') { detalle.push('correo dudoso: ' + estadoCorreo.motivo + ' (+0)'); }
 else { detalle.push('correo personal (+0)'); }
 
 var nivel = puntos >= 7 ? 'B2B ALTO' : (puntos >= 3 ? 'B2B MEDIO' : 'B2B BAJO - REVISAR');
 return { nivel: nivel, puntos: puntos, detalle: detalle.join(', ') };
 }
 
-// Validación de dominios personales no corporativos
-function isCorporateEmail(email) {
-const freeEmailDomains = [
-'gmail.com', 'googlemail.com', 'hotmail.com', 'outlook.com',
-'live.com', 'yahoo.com', 'yahoo.es', 'icloud.com',
-'msn.com', 'aol.com', 'mail.com', 'protonmail.com'
+/* ================= CALIDAD DE DATOS (modo suave) =================
+   Nada de lo que sigue bloquea el envio del formulario. Hace dos cosas:
+   (1) marca el lead en Zoho con [!! REVISAR ...] para que ventas lo valide a mano, y
+   (2) retira el punto de la calificacion B2B cuando el dato es de relleno.
+   Unica excepcion: el telefono del modal de WhatsApp Mexico, que si se rechaza. */
+
+// Correos gratuitos / personales. Incluye variantes regionales: antes yahoo.com.mx u hotmail.es contaban como "corporativo".
+var MG_DOMINIOS_GRATIS = [
+  'gmail.com','googlemail.com','hotmail.com','hotmail.es','hotmail.com.mx','hotmail.co',
+  'outlook.com','outlook.es','outlook.com.mx','live.com','live.com.mx',
+  'yahoo.com','yahoo.es','yahoo.com.mx','yahoo.com.co','icloud.com','me.com','msn.com',
+  'aol.com','mail.com','protonmail.com','proton.me','prodigy.net.mx','telmexmail.com'
 ];
-if (!email || !email.includes('@')) return false;
-const domain = email.split('@')[1].toLowerCase().trim();
-return !freeEmailDomains.includes(domain);
+
+// Dominios de relleno que la gente escribe para cumplir el formato (el caso fatima@empresa.com).
+var MG_DOMINIOS_RELLENO = [
+  'empresa.com','empresa.mx','empresa.com.mx','empresa.com.co','miempresa.com','tuempresa.com','suempresa.com',
+  'ejemplo.com','ejemplo.mx','example.com','example.org','example.net','test.com','prueba.com',
+  'correo.com','micorreo.com','sucorreo.com','tucorreo.com','email.com','dominio.com','midominio.com','tudominio.com',
+  'nombre.com','ninguno.com','nada.com','noaplica.com','sinempresa.com','particular.com',
+  'asd.com','asdf.com','xxx.com','aaa.com'
+];
+var MG_USUARIOS_RELLENO = ['test','prueba','asd','asdf','xxx','aaa','correo','nombre','ninguno','ninguna','nada','noaplica','na','no','sincorreo','nocorreo','notengo'];
+
+// Servicios gratuitos conocidos (para detectar dominios casi iguales: gmail.con, gmial.com, igmeil.com...)
+var MG_ETIQ_GRATIS = ['gmail','hotmail','outlook','yahoo','icloud','live','msn'];
+var MG_TYPOS_GRATIS = ['igmeil','gmeil','gmial','gamil','gmai','gnail','gmaill','gmal','gmil','gemail','hotmial','hotmal','hotmai','hotmil','hotamil','outlok','outlock','yaho','yahooo','icoud','iclod'];
+
+function mgDistancia(a, b) {
+  var m = a.length, n = b.length, i, j, prev = [], cur;
+  for (j = 0; j <= n; j++) prev[j] = j;
+  for (i = 1; i <= m; i++) {
+    cur = [i];
+    for (j = 1; j <= n; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+
+// '' = dominio normal · 'gratis' = correo personal conocido · 'parecido' = casi igual a uno gratuito (error de dedo o invento)
+function mgTipoDominio(dom) {
+  if (MG_DOMINIOS_GRATIS.indexOf(dom) !== -1) return 'gratis';
+  var et = dom.split('.')[0];
+  if (MG_ETIQ_GRATIS.indexOf(et) !== -1 || MG_TYPOS_GRATIS.indexOf(et) !== -1) return 'parecido';
+  if (et.length >= 5) {
+    for (var i = 0; i < MG_ETIQ_GRATIS.length; i++) {
+      var f = MG_ETIQ_GRATIS[i];
+      if (f.length < 5) continue;
+      if (mgDistancia(et, f) <= (f.length >= 7 ? 2 : 1)) return 'parecido';
+    }
+  }
+  return '';
+}
+
+// Resultado de la verificacion de registro MX por dominio: 'ok' o el motivo de falla. Se llena en segundo plano.
+var MG_MX_CACHE = {};
+var MG_MX_PENDIENTE = {};
+
+// tipo: 'corporativo' | 'personal' | 'dudoso'  (solo 'dudoso' genera bandera en Zoho)
+function mgCorreoEstado(email) {
+  var e = (email || '').trim().toLowerCase();
+  var at = e.lastIndexOf('@');
+  if (at < 1) return { tipo: 'dudoso', motivo: 'sin formato de correo' };
+  var usuario = e.slice(0, at);
+  var dom = e.slice(at + 1).replace(/^\.+|\.+$/g, '');
+  if (MG_DOMINIOS_RELLENO.indexOf(dom) !== -1) return { tipo: 'dudoso', motivo: 'dominio de relleno (' + dom + ')' };
+  if (MG_USUARIOS_RELLENO.indexOf(usuario) !== -1) return { tipo: 'dudoso', motivo: 'usuario de relleno (' + usuario + ')' };
+  var t = mgTipoDominio(dom);
+  if (t === 'parecido') return { tipo: 'dudoso', motivo: 'dominio parecido a correo gratuito (' + dom + ')' };
+  if (t === 'gratis') return { tipo: 'personal', motivo: '' };
+  var mx = MG_MX_CACHE[dom];
+  if (mx && mx !== 'ok') return { tipo: 'dudoso', motivo: mx };
+  return { tipo: 'corporativo', motivo: '' };
+}
+
+// Se conserva el nombre original: ahora es una senal mas, sin poder de bloqueo.
+function isCorporateEmail(email) {
+  return mgCorreoEstado(email).tipo === 'corporativo';
+}
+
+// Verifica que el dominio exista y reciba correo (registro MX) con DNS publico de Google.
+// Solo viaja el DOMINIO (empresa.com), nunca el correo completo ni datos personales.
+// Si el servicio no responde en 2.5 s o falla, NO se marca nada (falla abierta).
+// Se lanza en cuanto el usuario escribe el correo, asi el resultado ya esta listo al enviar.
+function mgVerificarMX(email) {
+  var at = (email || '').lastIndexOf('@');
+  if (at < 1 || typeof fetch !== 'function') return Promise.resolve('');
+  var dom = email.slice(at + 1).trim().toLowerCase();
+  // Gratuitos, de relleno y typos de gratuitos ya se resuelven sin consultar nada.
+  if (dom.indexOf('.') < 1 || MG_DOMINIOS_RELLENO.indexOf(dom) !== -1 || mgTipoDominio(dom) !== '') return Promise.resolve('');
+  if (MG_MX_CACHE[dom]) return Promise.resolve(MG_MX_CACHE[dom]);
+  if (MG_MX_PENDIENTE[dom]) return MG_MX_PENDIENTE[dom];
+  var ctl = (typeof AbortController === 'function') ? new AbortController() : null;
+  var timer = ctl ? setTimeout(function () { ctl.abort(); }, 2500) : null;
+  var p = fetch('https://dns.google/resolve?name=' + encodeURIComponent(dom) + '&type=MX', {
+      headers: { 'Accept': 'application/dns-json' },
+      signal: ctl ? ctl.signal : undefined
+    })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) {
+      if (timer) clearTimeout(timer);
+      if (!j || typeof j.Status !== 'number') return '';
+      var res;
+      if (j.Status === 3) {
+        res = 'dominio inexistente (' + dom + ')';
+      } else if (j.Status === 0) {
+        var mx = (j.Answer || []).filter(function (a) { return a.type === 15 && !/^\d+\s+\.?$/.test((a.data || '').trim()); });
+        res = mx.length ? 'ok' : 'sin registro MX (' + dom + ')';
+      } else {
+        return '';
+      }
+      MG_MX_CACHE[dom] = res;
+      return res;
+    })
+    .catch(function () { if (timer) clearTimeout(timer); return ''; });
+  MG_MX_PENDIENTE[dom] = p;
+  return p;
+}
+
+// ---------- Texto ilegible (nombre y empresa) ----------
+// Ataca lo que dejan los teclazos al azar: digitos dentro del nombre, URLs, letras o bloques repetidos,
+// rachas imposibles de vocales o consonantes. No intenta adivinar "nombres raros": un nombre poco
+// comun pero pronunciable NO se marca.
+function mgNormTexto(s) {
+  var t = (s || '').toLowerCase();
+  try { t = t.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) {}
+  return t;
+}
+
+function mgTokenIlegible(t, esNombre) {
+  var r = [];
+  var letras = t.replace(/[^a-z]/g, '');
+  if (esNombre && /\d/.test(t)) r.push('digitos dentro del nombre');
+  if (t.length >= 25) r.push('palabra demasiado larga');
+  if (/(.)\1{3,}/.test(t)) r.push('letra repetida');
+  if (/(.{2,4})\1{2,}/.test(letras)) r.push('patron repetido');
+  if (/[aeiou]{5,}/.test(letras)) r.push('exceso de vocales');
+  // 5 teclas seguidas de una misma fila del teclado (asdfg, qwert, zxcvb...), tambien al reves
+  var filas = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+  for (var f = 0; f < filas.length; f++) {
+    var fila = filas[f], inv = fila.split('').reverse().join('');
+    for (var q = 0; q + 5 <= fila.length; q++) {
+      if (letras.indexOf(fila.substr(q, 5)) !== -1 || letras.indexOf(inv.substr(q, 5)) !== -1) { if (r.indexOf('teclas consecutivas') === -1) r.push('teclas consecutivas'); }
+    }
+  }
+  if (letras.length >= 7 && /[^aeiou]{5,}/.test(letras) && ((letras.match(/[aeiouy]/g) || []).length / letras.length) < 0.2) {
+    r.push('casi sin vocales');
+  }
+  return r;
+}
+
+function mgTextoIlegible(texto, esNombre) {
+  var s = (texto || '').trim(), r = [];
+  if (!s) return r;
+  var low = mgNormTexto(s);
+  if (/https?:\/\/|www\.|\/\//.test(low)) return ['URL'];
+  if (esNombre && (/@/.test(low) || /\.(com|net|org|mx|co)\b/.test(low))) return ['URL o correo en el nombre'];
+  var tokens = low.split(/[\s\-_,.\/:]+/);
+  for (var i = 0; i < tokens.length; i++) {
+    if (!tokens[i]) continue;
+    var rz = mgTokenIlegible(tokens[i], esNombre);
+    for (var k = 0; k < rz.length; k++) { if (r.indexOf(rz[k]) === -1) r.push(rz[k]); }
+  }
+  return r;
+}
+
+// "Ninguna", "No", "Que"... : empresa de relleno. Se compara el texto completo, no por contener la palabra.
+var MG_EMPRESA_RELLENO = ['ninguna','ninguno','ninguna empresa','no','na','n/a','n a','nada','no tengo','no aplica','que','particular','personal','sin empresa','x','xx','xxx','test','prueba','asd','asdf','none','mi casa','yo'];
+function mgEmpresaRelleno(empresa) {
+  var n = mgNormTexto(empresa).replace(/[^a-z0-9\/ ]/g, '').replace(/\s+/g, ' ').trim();
+  return MG_EMPRESA_RELLENO.indexOf(n) !== -1;
+}
+
+// ---------- Telefono ----------
+// Deja solo el numero nacional de Mexico (10 digitos) quitando +52, 52, 521, 044, 045 y 01.
+function mgNormalizarTelMX(valor) {
+  var d = (valor || '').replace(/\D/g, '').replace(/^00/, '');
+  if (d.length === 13 && d.indexOf('521') === 0) d = d.slice(3);
+  else if (d.length === 12 && d.indexOf('52') === 0) d = d.slice(2);
+  else if (d.length === 13 && (d.indexOf('044') === 0 || d.indexOf('045') === 0)) d = d.slice(3);
+  else if (d.length === 12 && d.indexOf('01') === 0) d = d.slice(2);
+  return d;
+}
+
+// Recibe 10 digitos. '' = parece real; si no, el motivo.
+function mgTelefonoFalso(d10) {
+  if (!/^\d{10}$/.test(d10)) return 'longitud';
+  if (/(\d)\1{5,}/.test(d10)) return 'digito repetido';
+  // 2 digitos distintos o menos en 10 posiciones (5555500000, 1212121212): practicamente nunca es un numero real
+  var distintos = {}, nd = 0;
+  for (var k = 0; k < 10; k++) { if (!distintos[d10.charAt(k)]) { distintos[d10.charAt(k)] = 1; nd++; } }
+  if (nd <= 2) return 'pocos digitos distintos';
+  var asc = '01234567890123456789', desc = '98765432109876543210', i, p;
+  for (i = 0; i <= 4; i++) {
+    var sub = d10.substr(i, 6);
+    if (asc.indexOf(sub) !== -1 || desc.indexOf(sub) !== -1) return 'secuencia';
+  }
+  for (p = 2; p <= 5; p++) {
+    if (10 % p === 0 && d10.slice(0, p).repeat(10 / p) === d10) return 'bloque repetido';
+  }
+  return '';
+}
+
+// Motivo por el que un telefono se ve falso, o ''. En Mexico ademas la lada nunca empieza en 0 ni en 1.
+function mgTelefonoMotivo(valor, pais) {
+  var d;
+  if (pais === 'MX') {
+    d = mgNormalizarTelMX(valor);
+    if (d.length !== 10) return '';
+    if (/^[01]/.test(d)) return 'lada invalida';
+  } else {
+    d = (valor || '').replace(/\D/g, '');
+    if (d.length < 10) return '';
+    d = d.slice(-10);
+  }
+  return mgTelefonoFalso(d);
+}
+
+// Banderas que se anteponen a la descripcion del lead en Zoho (una por linea).
+function mgBanderas(nombre, empresa, correo, telefono, pais) {
+  var l = [], ileg = [];
+  var rn = mgTextoIlegible(nombre, true);
+  if (rn.length) ileg.push('nombre (' + rn.join(', ') + ')');
+  var re = mgTextoIlegible(empresa, false);
+  if (re.length) ileg.push('empresa (' + re.join(', ') + ')');
+  if (ileg.length) l.push('[!! REVISAR - texto ilegible en: ' + ileg.join('; ') + ']');
+  if (mgEmpresaRelleno(empresa)) l.push('[!! REVISAR - empresa de relleno: ' + String(empresa).trim().slice(0, 40) + ']');
+  if (correo) {
+    var ce = mgCorreoEstado(correo);
+    if (ce.tipo === 'dudoso') l.push('[!! REVISAR - correo dudoso: ' + ce.motivo + ']');
+  }
+  if (telefono) {
+    var tm = mgTelefonoMotivo(telefono, pais);
+    if (tm) l.push('[!! REVISAR - telefono dudoso: ' + tm + ']');
+  }
+  return l;
 }
 
 // Variable global declarada correctamente para evitar el ReferenceError
@@ -1448,9 +1766,19 @@ const platform = document.getElementById('profile_platform').value;
 const extras = document.getElementById('profile_extras').value;
 const notes = document.getElementById('profile_notes').value;
 
-const calif = calificarLeadB2B(volume, document.getElementById('Company').value, platform, leadEmail);
+const companyVal = document.getElementById('Company').value;
 
-const fullDesc = `[${calif.nivel}] ${calif.puntos}/10 — ${calif.detalle}
+// Mexico: el celular se guarda a 10 digitos (sin +52, 044, 01) para que Zoho detecte duplicados.
+if (countryVal === 'MX') {
+  var telMx = mgNormalizarTelMX(leadTel);
+  if (telMx.length === 10) { var mobEl = document.getElementById('Mobile'); if (mobEl) mobEl.value = telMx; }
+}
+
+// Banderas de calidad de datos (modo suave: no bloquean, solo avisan a ventas).
+const banderas = mgBanderas(fullName, companyVal, leadEmail, leadTel, countryVal === 'MX' ? 'MX' : (countryVal === 'CO' ? 'CO' : 'OTHER'));
+const calif = calificarLeadB2B(volume, companyVal, platform, leadEmail);
+
+const fullDesc = (banderas.length ? banderas.join('\n') + '\n' : '') + `[${calif.nivel}] ${calif.puntos}/10 — ${calif.detalle}
 [SOLICITUD WEB JABRA EVOLVE3]
 Fuente: ${leadSourceVal}
 Volumen: ${volume}
@@ -1485,6 +1813,17 @@ console.warn('SalesIQ tracking bypass:', e);
 mgGuardarRegistro(leadEmail, leadTel, 'formulario');
 return true;
 }
+
+// Verificar el dominio del correo apenas el usuario sale del campo (formulario y modal de WhatsApp)
+(function () {
+  var emailForm = document.getElementById('Email');
+  if (emailForm) emailForm.addEventListener('blur', function () { mgVerificarMX(emailForm.value.trim()); });
+  var contactoWa = document.getElementById('wa_contacto');
+  if (contactoWa) contactoWa.addEventListener('blur', function () {
+    var v = contactoWa.value.trim();
+    if (v.indexOf('@') !== -1) mgVerificarMX(v);
+  });
+})();
 </script>
 
 <!-- Google Ads -> Zoho CRM: guarda el GCLID del clic y llena el campo zc_gad del formulario -->
