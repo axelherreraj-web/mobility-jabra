@@ -1453,7 +1453,7 @@ if (estadoCorreo.tipo === 'corporativo') { puntos += 1; detalle.push('correo cor
 else if (estadoCorreo.tipo === 'dudoso') { detalle.push('correo dudoso: ' + estadoCorreo.motivo + ' (+0)'); }
 else { detalle.push('correo personal (+0)'); }
 
-var nivel = puntos >= 7 ? 'B2B ALTO' : (puntos >= 3 ? 'B2B MEDIO' : 'B2B BAJO - REVISAR');
+var correoVerificado = (estadoCorreo.tipo === 'corporativo'); var nivel; if (puntos >= 7 && !correoVerificado) { nivel = 'B2B MEDIO'; detalle.push('volumen autodeclarado sin correo corporativo: tope MEDIO'); } else { nivel = puntos >= 7 ? 'B2B ALTO' : (puntos >= 3 ? 'B2B MEDIO' : 'B2B BAJO - REVISAR'); }
 return { nivel: nivel, puntos: puntos, detalle: detalle.join(', ') };
 }
 
