@@ -1626,7 +1626,7 @@ function mgTextoIlegible(texto, esNombre) {
 }
 
 // "Ninguna", "No", "Que"... : empresa de relleno. Se compara el texto completo, no por contener la palabra.
-var MG_EMPRESA_RELLENO = ['ninguna','ninguno','ninguna empresa','no','na','n/a','n a','nada','no tengo','no aplica','que','particular','personal','sin empresa','x','xx','xxx','test','prueba','asd','asdf','none','mi casa','yo'];
+var MG_EMPRESA_RELLENO = ['ninguna','ninguno','ninguna empresa','no','na','n/a','n a','nada','no tengo','no aplica','que','particular','personal','sin empresa','x','xx','xxx','test','prueba','asd','asdf','none','mi casa','yo','no hay','no trabajo','estudiante','soy estudiante','desempleado','casa','mi empresa','empresa','no se','nose','aun no','todavia no','ama de casa','independiente'];
 function mgEmpresaRelleno(empresa) {
   var n = mgNormTexto(empresa).replace(/[^a-z0-9\/ ]/g, '').replace(/\s+/g, ' ').trim();
   return MG_EMPRESA_RELLENO.indexOf(n) !== -1;
@@ -1723,6 +1723,25 @@ alert('Debes aceptar el Aviso de Privacidad para continuar.');
 consentBox.focus();
 return false;
 }
+
+    // --- Puerta B2B: no se envia sin senal de intencion real ---
+    var mgVolSel = document.getElementById('profile_volume');
+    var mgEmpSel = document.getElementById('Company');
+    var mgVolVal = mgVolSel ? mgVolSel.value : '';
+    var mgEmpVal = mgEmpSel ? mgEmpSel.value.trim() : '';
+    if (mgEmpresaRelleno(mgEmpVal)) {
+      alert('Necesitamos el nombre real de tu empresa para poder cotizarte. Si es una compra personal, escribenos por WhatsApp y te orientamos.');
+      if (mgEmpSel) mgEmpSel.focus();
+      return false;
+    }
+    if (mgVolVal === '51-200' || mgVolVal === '200+') {
+      if (mgCorreoEstado(leadEmail).tipo !== 'corporativo') {
+        alert('Para cotizaciones desde 51 unidades necesitamos un correo corporativo (no Gmail, Hotmail o similares). Si prefieres, escribenos por WhatsApp.');
+        if (emailInput) emailInput.focus();
+        return false;
+      }
+    }
+
 
 // --- Guardas antispam (silenciosas) ---
 if (mgHoneypotLleno('mg_hp_form') ||
