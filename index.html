@@ -1733,12 +1733,14 @@ return false;
     if (mgEmpresaRelleno(mgEmpVal)) {
       alert('Necesitamos el nombre real de tu empresa para poder cotizarte. Si es una compra personal, escribenos por WhatsApp y te orientamos.');
       if (mgEmpSel) mgEmpSel.focus();
+      gtag('event','puerta_bloqueo',{motivo:'empresa_relleno',landing:'audio'});
       return false;
     }
     if (mgVolVal === '51-200' || mgVolVal === '200+') {
       if (mgCorreoEstado(leadEmail).tipo !== 'corporativo') {
         alert('Para cotizaciones desde 51 unidades necesitamos un correo corporativo (no Gmail, Hotmail o similares). Si prefieres, escribenos por WhatsApp.');
         if (emailInput) emailInput.focus();
+        gtag('event','puerta_bloqueo',{motivo:'volumen_sin_correo',landing:'audio'});
         return false;
       }
     }
@@ -1859,5 +1861,23 @@ return true;
 
 <!-- Google Ads -> Zoho CRM: guarda el GCLID del clic y llena el campo zc_gad del formulario -->
 <script src="https://crm.zoho.com/crm/javascript/zcga.js"></script>
+<script>
+/* Medicion GA4: el formulario entra en pantalla */
+(function(){
+  var f = document.getElementById('webform5656461000042516023');
+  if (!f || !window.IntersectionObserver || typeof gtag !== 'function') return;
+  var visto = false;
+  var io = new IntersectionObserver(function(ents){
+    for (var i = 0; i < ents.length; i++) {
+      if (ents[i].isIntersecting && !visto) {
+        visto = true;
+        gtag('event', 'form_visible', { landing: 'audio' });
+        io.disconnect();
+      }
+    }
+  }, { threshold: 0.3 });
+  io.observe(f);
+})();
+</script>
 </body>
 </html>
