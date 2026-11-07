@@ -1879,5 +1879,47 @@ return true;
   io.observe(f);
 })();
 </script>
+
+<!-- Medicion GA4 del Consultor Evolve3 -->
+<script>
+(function(){
+  var panel = document.getElementById("assistant-panel");
+  if (!panel) return;
+  var origen = "otro";
+  document.addEventListener("click", function(e){
+    var el = e.target && e.target.closest ? e.target.closest("button, a, #assistant-teaser") : null;
+    if (!el) return;
+    if (el.id === "assistant-teaser" || el.closest("#assistant-teaser")) { origen = "burbuja"; return; }
+    if ((el.textContent || "").toLowerCase().indexOf("preguntar al consultor") !== -1) { origen = "hero"; return; }
+    if ((el.getAttribute("onclick") || "").indexOf("toggleAsistenteVirtual") !== -1) { origen = "lanzador"; }
+  }, true);
+  function abierto(){ return !panel.classList.contains("hidden"); }
+  function ev(nombre, extra){
+    if (typeof gtag !== "function") return;
+    var d = { landing: "audio" };
+    for (var k in extra) { d[k] = extra[k]; }
+    gtag("event", nombre, d);
+  }
+  ["toggleAsistenteVirtual","openAssistantFromTeaser"].forEach(function(fn){
+    var orig = window[fn];
+    if (typeof orig !== "function") return;
+    window[fn] = function(){
+      var antes = abierto();
+      var r = orig.apply(this, arguments);
+      if (!antes && abierto()) {
+        ev("consultor_abierto", { origen: (fn === "openAssistantFromTeaser" ? "burbuja" : origen) });
+      }
+      return r;
+    };
+  });
+  var dis = window.dismissAssistantTeaser;
+  if (typeof dis === "function") {
+    window.dismissAssistantTeaser = function(){
+      ev("consultor_descartado", {});
+      return dis.apply(this, arguments);
+    };
+  }
+})();
+</script>
 </body>
 </html>
