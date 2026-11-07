@@ -807,7 +807,7 @@ var isHidden = panel.classList.contains('hidden');
 if (isHidden) {
 panel.classList.remove('hidden');
 try { sessionStorage.setItem('mg_teaser_shown', '1'); } catch (e) {}
-if (typeof gtag === 'function') { gtag('event', 'bot_open', { event_category: 'engagement', event_label: 'Consultor Evolve3' }); }
+if (typeof gtag === 'function') { gtag('event', 'bot_open', { event_category: 'engagement', event_label: 'Consultor Evolve3', origen: (window.__mgOrigen || 'otro'), landing: 'audio' }); }
 if (!iframe.getAttribute('src')) {
 requestAnimationFrame(function () { iframe.src = ASISTENTE_URL; });
 }
@@ -1883,40 +1883,22 @@ return true;
 <!-- Medicion GA4 del Consultor Evolve3 -->
 <script>
 (function(){
-  var panel = document.getElementById("assistant-panel");
-  if (!panel) return;
-  var origen = "otro";
+  // Marca desde donde se abrio el Consultor; la lee el evento bot_open
+  window.__mgOrigen = "otro";
   document.addEventListener("click", function(e){
     var el = e.target && e.target.closest ? e.target.closest("button, a, #assistant-teaser") : null;
     if (!el) return;
-    if (el.id === "assistant-teaser" || el.closest("#assistant-teaser")) { origen = "burbuja"; return; }
-    if ((el.textContent || "").toLowerCase().indexOf("preguntar al consultor") !== -1) { origen = "hero"; return; }
-    if ((el.getAttribute("onclick") || "").indexOf("toggleAsistenteVirtual") !== -1) { origen = "lanzador"; }
+    if (el.id === "assistant-teaser" || el.closest("#assistant-teaser")) { window.__mgOrigen = "burbuja"; return; }
+    if ((el.textContent || "").toLowerCase().indexOf("preguntar al consultor") !== -1) { window.__mgOrigen = "hero"; return; }
+    if ((el.getAttribute("onclick") || "").indexOf("toggleAsistenteVirtual") !== -1) { window.__mgOrigen = "lanzador"; }
   }, true);
-  function abierto(){ return !panel.classList.contains("hidden"); }
-  function ev(nombre, extra){
-    if (typeof gtag !== "function") return;
-    var d = { landing: "audio" };
-    for (var k in extra) { d[k] = extra[k]; }
-    gtag("event", nombre, d);
-  }
-  ["toggleAsistenteVirtual","openAssistantFromTeaser"].forEach(function(fn){
-    var orig = window[fn];
-    if (typeof orig !== "function") return;
-    window[fn] = function(){
-      var antes = abierto();
-      var r = orig.apply(this, arguments);
-      if (!antes && abierto()) {
-        ev("consultor_abierto", { origen: (fn === "openAssistantFromTeaser" ? "burbuja" : origen) });
-      }
-      return r;
-    };
-  });
-  var dis = window.dismissAssistantTeaser;
-  if (typeof dis === "function") {
+
+  // Cierran la burbuja sin abrir el Consultor: rechazo activo
+  var cerrar = window.dismissAssistantTeaser;
+  if (typeof cerrar === "function") {
     window.dismissAssistantTeaser = function(){
-      ev("consultor_descartado", {});
-      return dis.apply(this, arguments);
+      if (typeof gtag === "function") { gtag("event", "consultor_descartado", { landing: "audio" }); }
+      return cerrar.apply(this, arguments);
     };
   }
 })();
