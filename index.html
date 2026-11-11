@@ -816,17 +816,6 @@ panel.classList.add('hidden');
 }
 }
 </script>
-<script>
-// Precargar el asistente en segundo plano para que cargue más rápido al abrirlo
-window.addEventListener('load', function () {
-setTimeout(function () {
-var iframe = document.getElementById('assistant-iframe');
-if (iframe && !iframe.getAttribute('src')) {
-iframe.src = ASISTENTE_URL;
-}
-}, 2500);
-});
-</script>
 
 <!-- Disparadores proactivos del Consultor Evolve3 -->
 <script>
